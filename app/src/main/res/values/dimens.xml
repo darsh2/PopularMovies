@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="backdrop_height_movie_detail">256dp</dimen>
+    <dimen name="poster_size">128dp</dimen>
+
+    <dimen name="layout_margin_fab">16dp</dimen>
+    <dimen name="padding_widget">16dp</dimen>
+    <dimen name="layout_margin_overview">5dp</dimen>
+    <dimen name="progress_bar_margin">10dp</dimen>
+    <dimen name="padding_recycler_view">1dp</dimen>
+</resources>
