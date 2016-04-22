@@ -1,39 +1,40 @@
 package com.example.darsh.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 /**
  * Created by darshan on 4/4/16.
  */
-public class Movie {
-    @Expose
-    @SerializedName("adult")
-    private boolean adult;
-
-    @Expose
-    @SerializedName("backdrop_path")
-    private String backdropPath;
-
-    @Expose
-    @SerializedName("genre_ids")
-    private int[] genreIds;
-
+public class Movie implements Parcelable {
     @Expose
     @SerializedName("id")
     private int id;
 
     @Expose
-    @SerializedName("original_language")
-    private String originalLanguage;
+    @SerializedName("genre_ids")
+    private ArrayList<Integer> genreIds = new ArrayList<>();
+
+    @Expose
+    @SerializedName("adult")
+    private boolean adult;
+
+    @Expose
+    @SerializedName("title")
+    private String title;
 
     @Expose
     @SerializedName("original_title")
     private String originalTitle;
 
     @Expose
-    @SerializedName("overview")
-    private String overview;
+    @SerializedName("original_language")
+    private String originalLanguage;
 
     @Expose
     @SerializedName("release_date")
@@ -44,49 +45,87 @@ public class Movie {
     private String posterPath;
 
     @Expose
-    @SerializedName("popularity")
-    private double popularity;
-
+    @SerializedName("backdrop_path")
+    private String backdropPath;
 
     @Expose
-    @SerializedName("title")
-    private String title;
+    @SerializedName("overview")
+    private String overview;
 
     @Expose
     @SerializedName("video")
     private boolean video;
 
     @Expose
-    @SerializedName("vote_average")
-    private double voteAverage;
+    @SerializedName("popularity")
+    private double popularity;
 
     @Expose
     @SerializedName("vote_count")
     private long voteCount;
 
-    public boolean isAdult() {
-        return adult;
+    @Expose
+    @SerializedName("vote_average")
+    private double voteAverage;
+
+
+    public Movie() {
     }
 
-    public void setAdult(boolean adult) {
-        this.adult = adult;
+    private Movie(Parcel source) {
+        this.id = source.readInt();
+        this.genreIds = source.readArrayList(Integer.class.getClassLoader());
+        if (genreIds == null) {
+            genreIds = new ArrayList<>();
+        }
+        this.adult = source.readByte() == 1;
+        this.title = source.readString();
+        this.originalTitle = source.readString();
+        this.originalLanguage = source.readString();
+        this.releaseDate = source.readString();
+        this.posterPath = source.readString();
+        this.backdropPath = source.readString();
+        this.overview = source.readString();
+        this.video = source.readByte() == 1;
+        this.popularity = source.readDouble();
+        this.voteCount = source.readLong();
+        this.voteAverage = source.readDouble();
     }
 
-    public String getBackdropPath() {
-        return backdropPath;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeList(genreIds);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(title);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(releaseDate);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
+        dest.writeString(overview);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeDouble(popularity);
+        dest.writeLong(voteCount);
+        dest.writeDouble(voteAverage);
     }
 
-    public int[] getGenreIds() {
-        return genreIds;
-    }
+    public static final Parcelable.Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
 
-    public void setGenreIds(int[] genreIds) {
-        this.genreIds = genreIds;
-    }
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -96,12 +135,28 @@ public class Movie {
         this.id = id;
     }
 
-    public String getOriginalLanguage() {
-        return originalLanguage;
+    public ArrayList<Integer> getGenreIds() {
+        return genreIds;
     }
 
-    public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
+    public void setGenreIds(ArrayList<Integer> genreIds) {
+        this.genreIds = genreIds;
+    }
+
+    public boolean isAdult() {
+        return adult;
+    }
+
+    public void setAdult(boolean adult) {
+        this.adult = adult;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getOriginalTitle() {
@@ -112,12 +167,12 @@ public class Movie {
         this.originalTitle = originalTitle;
     }
 
-    public String getOverview() {
-        return overview;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 
     public String getReleaseDate() {
@@ -136,20 +191,20 @@ public class Movie {
         this.posterPath = posterPath;
     }
 
-    public double getPopularity() {
-        return popularity;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    public void setPopularity(double popularity) {
-        this.popularity = popularity;
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
-    public String getTitle() {
-        return title;
+    public String getOverview() {
+        return overview;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     public boolean isVideo() {
@@ -160,12 +215,12 @@ public class Movie {
         this.video = video;
     }
 
-    public double getVoteAverage() {
-        return voteAverage;
+    public double getPopularity() {
+        return popularity;
     }
 
-    public void setVoteAverage(double voteAverage) {
-        this.voteAverage = voteAverage;
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
     }
 
     public long getVoteCount() {
@@ -174,5 +229,13 @@ public class Movie {
 
     public void setVoteCount(long voteCount) {
         this.voteCount = voteCount;
+    }
+
+    public double getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(double voteAverage) {
+        this.voteAverage = voteAverage;
     }
 }
