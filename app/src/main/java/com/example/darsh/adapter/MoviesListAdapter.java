@@ -1,9 +1,7 @@
 package com.example.darsh.adapter;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.darsh.model.Movie;
 import com.example.darsh.popularmovies.R;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -25,8 +22,6 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
     private Context context;
     private ArrayList<Movie> movies;
 
-    private int spanCount = -1;
-
     private final String BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     public MoviesListAdapter(Context context, ArrayList<Movie> movies) {
@@ -36,11 +31,8 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ImageView imageView = new ImageView(parent.getContext());
-        imageView.setMinimumHeight(parent.getWidth() / spanCount);
-        imageView.setMinimumHeight(parent.getWidth() / spanCount);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
+        ImageView imageView = (ImageView) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.grid_view_item_movie, parent, false);
         ViewHolder viewHolder = new ViewHolder(imageView);
         return viewHolder;
     }
@@ -58,9 +50,7 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
         return movies.size();
     }
 
-    public void setSpanCount(int spanCount) {
-        this.spanCount = spanCount;
-    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;

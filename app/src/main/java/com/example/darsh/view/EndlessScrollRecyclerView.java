@@ -3,7 +3,6 @@ package com.example.darsh.view;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,11 +13,28 @@ import com.example.darsh.helper.Constants;
 
 import java.util.ArrayList;
 
+/*
+Copyright 2015 jianghejie
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+
 /**
- * Created by darshan on 18/4/16.
+ * Modified by darshan on 18/4/16.
  */
 public class EndlessScrollRecyclerView extends RecyclerView {
     private final String TAG = this.getClass().getSimpleName();
+    private final boolean DEBUG = false;
 
     private Adapter adapter;
     private Adapter wrapAdapter;
@@ -45,23 +61,23 @@ public class EndlessScrollRecyclerView extends RecyclerView {
     }
 
     private void initialiseView(Context context) {
-        if (Constants.DEBUG) Log.i(TAG, "+initialiseView()");
+        if (DEBUG) Log.i(TAG, "+initialiseView()");
         FooterView footerView = new FooterView(context);
         footerView.setVisibility(GONE);
         addFooterView(footerView);
-        if (Constants.DEBUG) Log.i(TAG, "-initialiseView()");
+        if (DEBUG) Log.i(TAG, "-initialiseView()");
     }
 
     private void addFooterView(final View view) {
-        if (Constants.DEBUG) Log.i(TAG, "+addFooterView()");
+        if (DEBUG) Log.i(TAG, "+addFooterView()");
         footerViews.clear();
         footerViews.add(view);
-        if (Constants.DEBUG) Log.i(TAG, "-addFooterView()");
+        if (DEBUG) Log.i(TAG, "-addFooterView()");
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-        if (Constants.DEBUG) Log.i(TAG, "+setAdapter()");
+        if (DEBUG) Log.i(TAG, "+setAdapter()");
         this.adapter = adapter;
         this.adapter.registerAdapterDataObserver(dataObserver);
         wrapAdapter = new WrapAdapter(this.adapter, footerViews);
@@ -69,16 +85,16 @@ public class EndlessScrollRecyclerView extends RecyclerView {
 
         dataObserver.onChanged();
 
-        if (Constants.DEBUG) Log.i(TAG, "-setAdapter()");
+        if (DEBUG) Log.i(TAG, "-setAdapter()");
     }
 
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
 
-        if (Constants.DEBUG) Log.i(TAG, "+onScrollStateChanged()");
+        if (DEBUG) Log.i(TAG, "+onScrollStateChanged()");
 
-        if (Constants.DEBUG) {
+        if (DEBUG) {
             Log.i(TAG, "Child count: " + getLayoutManager().getChildCount());
             Log.i(TAG, "Last visible item position: " + ((GridLayoutManager) getLayoutManager()).findLastVisibleItemPosition());
             Log.i(TAG, "Item count: " + getLayoutManager().getItemCount());
@@ -111,14 +127,14 @@ public class EndlessScrollRecyclerView extends RecyclerView {
                 loadingListener.onLoadMore();
             }
 
-            if (Constants.DEBUG) Log.i(TAG, "-onScrollStateChanged()");
+            if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
         } else {
-            if (Constants.DEBUG) Log.i(TAG, "-onScrollStateChanged()");
+            if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
         }
     }
 
     public void loadingComplete() {
-        if (Constants.DEBUG) Log.i(TAG, "loadingComplete");
+        if (DEBUG) Log.i(TAG, "loadingComplete");
         isLoading = false;
         View footerView = footerViews.get(0);
         if (previousTotal < getLayoutManager().getItemCount()) {

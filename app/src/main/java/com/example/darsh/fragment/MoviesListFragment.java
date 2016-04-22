@@ -1,5 +1,6 @@
 package com.example.darsh.fragment;
 
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,7 +31,8 @@ import retrofit2.Response;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListFragment extends Fragment {
-    private final String TAG = this.getClass().getSimpleName();
+    public static String TAG = MoviesListFragment.class.getSimpleName();
+    private final boolean DEBUG = true;
 
     private ProgressBar progressBar;
 
@@ -39,7 +41,8 @@ public class MoviesListFragment extends Fragment {
     private MoviesListAdapter adapter;
     private ArrayList<Movie> movies;
 
-    private int page = 1;
+    private int page;
+    private int position;
 
     public MoviesListFragment() {}
 
@@ -47,7 +50,17 @@ public class MoviesListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Constants.DEBUG) Log.i(TAG, "onCreate");
+        if (savedInstanceState != null) {
+            movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
+            page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
+            position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
+
+            if (movies != null) {
+                if (DEBUG) Log.i(TAG, movies.get(0).getTitle() + " " + movies.get(1).getTitle());
+                if (DEBUG) Log.i(TAG, "Page: " + page);
+                if (DEBUG) Log.i(TAG, "Position: " + position);
+            }
+        }
     }
 
     @Nullable
@@ -56,18 +69,24 @@ public class MoviesListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
+        progressBar.setVisibility(View.INVISIBLE);
 
-        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
+        setUpRecyclerView();
+
+        return view;
+    }
+
+    private void setUpRecyclerView() {
+        int spanCount = getSpanCount();
+        gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.padding_recycler_view)));
         recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
             @Override
             public void onLoadMore() {
-                if (Constants.DEBUG) Log.i(TAG, "onLoadMore");
                 page++;
-                if (Constants.DEBUG) Log.i(TAG, "Page Number: " + page);
                 if (page <= 1000) {
                     loadPopularMovies();
                     recyclerView.loadingComplete();
@@ -77,21 +96,47 @@ public class MoviesListFragment extends Fragment {
 
         if (movies == null) {
             movies = new ArrayList<>();
+            page = 1;
+            position = 0;
         }
         adapter = new MoviesListAdapter(getActivity().getApplicationContext(), movies);
-        adapter.setSpanCount(gridLayoutManager.getSpanCount());
         recyclerView.setAdapter(adapter);
+    }
 
-        loadPopularMovies();
+    private int getSpanCount() {
+        int spanCount = 2;
+        if (getActivity() != null) {
+            int orientation = getActivity().getResources()
+                    .getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                spanCount = 3;
+            }
+        }
+        return spanCount;
+    }
 
-        if (Constants.DEBUG) Log.i(TAG, "onCreateView");
-
-        return view;
+    @Override
+    public void onStart() {
+        super.onStart();
+        /*
+        If movies list is of size zero, movies have to be
+        fetched from tmdb. Hence display progress bar.
+         */
+        if (movies.size() == 0) {
+            if (DEBUG) Log.i(TAG, "First time load");
+            progressBar.setVisibility(View.VISIBLE);
+            loadPopularMovies();
+        } else {
+            recyclerView.scrollToPosition(position);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
+        outState.putInt(Constants.NEXT_PAGE, page);
+        outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
     private void loadPopularMovies() {
