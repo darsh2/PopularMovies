@@ -9,7 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.example.darsh.adapter.FragmentTabsAdapter;
-import com.example.darsh.fragment.MoviesListFragment;
+import com.example.darsh.fragment.PopularMoviesFragment;
+import com.example.darsh.fragment.TopRatedMoviesFragment;
 import com.example.darsh.popularmovies.R;
 
 /**
@@ -36,18 +37,12 @@ public class MoviesListActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MoviesListFragment(), MoviesListFragment.TAG)
-                    .commit();
-        }*/
     }
 
     private void setupViewPager() {
         FragmentTabsAdapter adapter = new FragmentTabsAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MoviesListFragment(), getString(R.string.popular));
-        adapter.addFragment(new MoviesListFragment(), getString(R.string.top_rated));
+        adapter.addFragment(new PopularMoviesFragment(), getString(R.string.popular));
+        adapter.addFragment(new TopRatedMoviesFragment(), getString(R.string.top_rated));
         viewPager.setAdapter(adapter);
     }
 }
