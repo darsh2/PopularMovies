@@ -1,5 +1,7 @@
 package com.example.darsh.network;
 
+import com.example.darsh.popularmovies.BuildConfig;
+
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
@@ -49,7 +51,7 @@ public class TmdbRestClient {
                         Request request = chain.request();
                         HttpUrl url = request.url()
                                 .newBuilder()
-                                .addQueryParameter("api_key", "d3482c4414fedae34c2191e50a1ab189")
+                                .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
                                 .build();
                         Request.Builder builder = request.newBuilder()
                                 .url(url)
