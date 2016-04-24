@@ -16,16 +16,11 @@ import android.widget.ProgressBar;
 import com.example.darsh.adapter.MoviesListAdapter;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
-import com.example.darsh.model.Result;
-import com.example.darsh.network.TmdbRestClient;
 import com.example.darsh.popularmovies.R;
 import com.example.darsh.view.EndlessScrollRecyclerView;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 /**
  * Created by darshan on 19/4/16.
@@ -88,7 +83,7 @@ public class MoviesListFragment extends Fragment {
             public void onLoadMore() {
                 page++;
                 if (page <= 1000) {
-                    loadPopularMovies();
+                    loadMovies();
                     recyclerView.loadingComplete();
                 }
             }
@@ -125,7 +120,7 @@ public class MoviesListFragment extends Fragment {
         if (movies.size() == 0) {
             if (DEBUG) Log.i(TAG, "First time load");
             progressBar.setVisibility(View.VISIBLE);
-            loadPopularMovies();
+            loadMovies();
         } else {
             recyclerView.scrollToPosition(position);
         }
@@ -139,29 +134,29 @@ public class MoviesListFragment extends Fragment {
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
-    private void loadPopularMovies() {
-        Call<Result> call = TmdbRestClient.getPopularMoviesImpl().getPopularMovies(page);
-        Callback<Result> callback = new Callback<Result>() {
-            @Override
-            public void onResponse(Call<Result> call, Response<Result> response) {
-                int numMovies = movies.size();
-                int numMoviesDownloaded = response.body().getResults().size();
-                movies.addAll(response.body().getResults());
-                if (page == 1) {
-                    adapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    return;
-                }
-                adapter.notifyItemRangeInserted(numMovies, numMoviesDownloaded);
-            }
+    protected void loadMovies() {
+    }
 
-            @Override
-            public void onFailure(Call<Result> call, Throwable t) {
+    protected void updateList(int numMovies, int numMoviesDownloaded) {
+        if (page == 1) {
+            adapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+            return;
+        }
+        adapter.notifyItemRangeInserted(numMovies, numMoviesDownloaded);
+    }
 
-            }
-        };
-        call.enqueue(callback);
+    protected void addMovies(List<Movie> movies) {
+        this.movies.addAll(movies);
+    }
+
+    protected int getNumMovies() {
+        return movies.size();
+    }
+
+    protected int getPage() {
+        return page;
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {
