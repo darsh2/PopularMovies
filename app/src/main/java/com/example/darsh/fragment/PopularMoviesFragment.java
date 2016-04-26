@@ -1,6 +1,6 @@
 package com.example.darsh.fragment;
 
-import com.example.darsh.model.Result;
+import com.example.darsh.model.MoviesList;
 import com.example.darsh.network.TmdbRestClient;
 
 import retrofit2.Call;
@@ -16,18 +16,18 @@ public class PopularMoviesFragment extends MoviesListFragment {
     @Override
     protected void loadMovies() {
         int page = getPage();
-        Call<Result> call = TmdbRestClient.getPopularMoviesImpl().getPopularMovies(page);
-        Callback<Result> callback = new Callback<Result>() {
+        Call<MoviesList> call = TmdbRestClient.getPopularMoviesImpl().getPopularMovies(page);
+        Callback<MoviesList> callback = new Callback<MoviesList>() {
             @Override
-            public void onResponse(Call<Result> call, Response<Result> response) {
+            public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
                 int numMovies = getNumMovies();
-                int numMoviesDownloaded = response.body().getResults().size();
-                addMovies(response.body().getResults());
+                int numMoviesDownloaded = response.body().getMovies().size();
+                addMovies(response.body().getMovies());
                 updateList(numMovies, numMoviesDownloaded);
             }
 
             @Override
-            public void onFailure(Call<Result> call, Throwable t) {
+            public void onFailure(Call<MoviesList> call, Throwable t) {
 
             }
         };

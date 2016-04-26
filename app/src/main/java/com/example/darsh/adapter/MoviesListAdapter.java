@@ -1,5 +1,6 @@
 package com.example.darsh.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,15 +18,17 @@ import java.util.ArrayList;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.ViewHolder> {
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = MoviesListAdapter.class.getName();
 
+    private OnMovieClickListener onMovieClickListener;
     private Context context;
     private ArrayList<Movie> movies;
 
     private final String BASE_URL = "http://image.tmdb.org/t/p/w185";
 
-    public MoviesListAdapter(Context context, ArrayList<Movie> movies) {
-        this.context = context;
+    public MoviesListAdapter(Activity activity, ArrayList<Movie> movies) {
+        this.onMovieClickListener = (OnMovieClickListener) activity;
+        this.context = activity.getApplicationContext();
         this.movies = movies;
     }
 
@@ -33,12 +36,20 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageView imageView = (ImageView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.grid_view_item_movie, parent, false);
-        ViewHolder viewHolder = new ViewHolder(imageView);
+        final ViewHolder viewHolder = new ViewHolder(imageView);
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onMovieClickListener != null) {
+                    onMovieClickListener.onMovieClick(movies.get(viewHolder.getAdapterPosition()));
+                }
+            }
+        });
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Glide.with(context)
                 .load(BASE_URL + movies.get(position).getPosterPath())
                 .placeholder(R.drawable.image_placeholder)
@@ -50,14 +61,16 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
         return movies.size();
     }
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
 
-        public ViewHolder(ImageView imageView) {
+        public ViewHolder(final ImageView imageView) {
             super(imageView);
             this.imageView = imageView;
         }
+    }
+
+    public interface OnMovieClickListener {
+        void onMovieClick(Movie movie);
     }
 }

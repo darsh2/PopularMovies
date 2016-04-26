@@ -26,7 +26,7 @@ import java.util.List;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListFragment extends Fragment {
-    public static String TAG = MoviesListFragment.class.getSimpleName();
+    private final String TAG = MoviesListFragment.class.getName();
     private final boolean DEBUG = true;
 
     private ProgressBar progressBar;
@@ -94,7 +94,7 @@ public class MoviesListFragment extends Fragment {
             page = 1;
             position = 0;
         }
-        adapter = new MoviesListAdapter(getActivity().getApplicationContext(), movies);
+        adapter = new MoviesListAdapter(getActivity(), movies);
         recyclerView.setAdapter(adapter);
     }
 

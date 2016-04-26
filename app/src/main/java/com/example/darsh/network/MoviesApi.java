@@ -1,9 +1,11 @@
 package com.example.darsh.network;
 
-import com.example.darsh.model.Result;
+import com.example.darsh.model.Movie;
+import com.example.darsh.model.MoviesList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -12,11 +14,16 @@ import retrofit2.http.Query;
 public class MoviesApi {
     public interface PopularMovies {
         @GET("movie/popular")
-        Call<Result> getPopularMovies(@Query("page") Integer page);
+        Call<MoviesList> getPopularMovies(@Query("page") Integer page);
     }
 
     public interface TopRatedMovies {
         @GET("movie/top_rated")
-        Call<Result> getTopRatedMovies(@Query("page") Integer page);
+        Call<MoviesList> getTopRatedMovies(@Query("page") Integer page);
+    }
+
+    public interface MovieDetails {
+        @GET("movie/{id}")
+        Call<Movie> getMovieDetails(@Path("id") Integer id);
     }
 }

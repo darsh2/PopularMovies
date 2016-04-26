@@ -8,14 +8,14 @@ import java.util.List;
 /**
  * Created by darshan on 4/4/16.
  */
-public class Result {
+public class MoviesList {
     @Expose
     @SerializedName("page")
     private int page;
 
     @Expose
     @SerializedName("results")
-    private List<Movie> results;
+    private List<Movie> movies;
 
     @Expose
     @SerializedName("total_pages")
@@ -33,12 +33,12 @@ public class Result {
         this.page = page;
     }
 
-    public List<Movie> getResults() {
-        return results;
+    public List<Movie> getMovies() {
+        return movies;
     }
 
-    public void setResults(List<Movie> results) {
-        this.results = results;
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
     }
 
     public int getTotalPages() {

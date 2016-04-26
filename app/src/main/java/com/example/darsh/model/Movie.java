@@ -17,8 +17,8 @@ public class Movie implements Parcelable {
     private int id;
 
     @Expose
-    @SerializedName("genre_ids")
-    private ArrayList<Integer> genreIds = new ArrayList<>();
+    @SerializedName("genres")
+    private ArrayList<Genre> genres = new ArrayList<>();
 
     @Expose
     @SerializedName("adult")
@@ -74,9 +74,9 @@ public class Movie implements Parcelable {
 
     private Movie(Parcel source) {
         this.id = source.readInt();
-        this.genreIds = source.readArrayList(Integer.class.getClassLoader());
-        if (genreIds == null) {
-            genreIds = new ArrayList<>();
+        source.readTypedList(this.genres, Genre.CREATOR);
+        if (genres == null) {
+            genres = new ArrayList<>();
         }
         this.adult = source.readByte() == 1;
         this.title = source.readString();
@@ -100,7 +100,7 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeList(genreIds);
+        dest.writeTypedList(genres);
         dest.writeByte((byte) (adult ? 1 : 0));
         dest.writeString(title);
         dest.writeString(originalTitle);
@@ -135,12 +135,12 @@ public class Movie implements Parcelable {
         this.id = id;
     }
 
-    public ArrayList<Integer> getGenreIds() {
-        return genreIds;
+    public ArrayList<Genre> getGenres() {
+        return genres;
     }
 
-    public void setGenreIds(ArrayList<Integer> genreIds) {
-        this.genreIds = genreIds;
+    public void setGenres(ArrayList<Genre> genres) {
+        this.genres = genres;
     }
 
     public boolean isAdult() {

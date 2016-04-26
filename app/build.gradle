@@ -10,7 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "TMDB_API_KEY", "\"YOUR_API_KEY\""
+        //buildConfigField "String", "TMDB_API_KEY", "\"YOUR_API_KEY\""
+        buildConfigField "String", "TMDB_API_KEY", "\"" + getApiKey() + "\""
     }
     buildTypes {
         release {
@@ -18,6 +19,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+/*
+Hiding API keys logic taken from here:
+https://gist.github.com/curioustechizen/9f7d745f9f5f51355bd6
+ */
+
+def getApiKey(){
+    def Properties properties = new Properties()
+    properties.load(new FileInputStream(new File('app/keystore.properties')))
+    return properties['TMDB_API_KEY']
 }
 
 dependencies {
