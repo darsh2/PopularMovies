@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.example.darsh.fragment.MovieDetailFragment;
+import com.example.darsh.helper.Constants;
 import com.example.darsh.popularmovies.R;
 
 /**
@@ -17,13 +19,16 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_movie_detail);
+        setContentView(R.layout.activity_movie_detail);
 
         Intent intent = getIntent();
-        if (intent != null) {
-            String title = intent.getStringExtra("title");
-            Log.d(TAG, "Title: " + title);
+        if (intent == null) {
+            finish();
         }
-    }
 
+        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_movie_detail, movieDetailFragment)
+                .commit();
+    }
 }

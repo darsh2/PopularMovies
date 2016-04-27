@@ -12,6 +12,7 @@ import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
 import com.example.darsh.fragment.PopularMoviesFragment;
 import com.example.darsh.fragment.TopRatedMoviesFragment;
+import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 import com.example.darsh.popularmovies.R;
 
@@ -56,7 +57,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     @Override
     public void onMovieClick(Movie movie) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra("title", movie.getTitle());
+        intent.putExtra(Constants.INTENT_EXTRA_MOVIE, movie);
         startActivity(intent);
     }
 }

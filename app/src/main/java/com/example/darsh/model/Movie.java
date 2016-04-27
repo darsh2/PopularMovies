@@ -49,6 +49,14 @@ public class Movie implements Parcelable {
     private String backdropPath;
 
     @Expose
+    @SerializedName("runtime")
+    private int duration;
+
+    @Expose
+    @SerializedName("tagline")
+    private String tagLine;
+
+    @Expose
     @SerializedName("overview")
     private String overview;
 
@@ -85,6 +93,8 @@ public class Movie implements Parcelable {
         this.releaseDate = source.readString();
         this.posterPath = source.readString();
         this.backdropPath = source.readString();
+        this.duration = source.readInt();
+        this.tagLine = source.readString();
         this.overview = source.readString();
         this.video = source.readByte() == 1;
         this.popularity = source.readDouble();
@@ -108,6 +118,8 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(posterPath);
         dest.writeString(backdropPath);
+        dest.writeInt(duration);
+        dest.writeString(tagLine);
         dest.writeString(overview);
         dest.writeByte((byte) (video ? 1 : 0));
         dest.writeDouble(popularity);
@@ -199,6 +211,22 @@ public class Movie implements Parcelable {
         this.backdropPath = backdropPath;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public String getTagLine() {
+        return tagLine;
+    }
+
+    public void setTagLine(String tagLine) {
+        this.tagLine = tagLine;
+    }
+
     public String getOverview() {
         return overview;
     }
@@ -237,5 +265,19 @@ public class Movie implements Parcelable {
 
     public void setVoteAverage(double voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    @Override
+    public String toString() {
+        return "Id: " + id + "\n" +
+                "Title: " + title + "\n" +
+                "Release Date: " + releaseDate + "\n" +
+                "Duration: " + duration + "\n" +
+                "Rating: " + voteAverage + "\n" +
+                "Poster: " + posterPath + "\n" +
+                "Backdrop: " + backdropPath + "\n" +
+                "Tag Line: " + tagLine + "\n" +
+                "Overview: " + overview + "\n" +
+                "Genre: " + genres.get(0).getName();
     }
 }

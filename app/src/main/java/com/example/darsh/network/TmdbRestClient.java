@@ -44,7 +44,7 @@ public class TmdbRestClient {
         return topRatedMovies;
     }
 
-    public static MoviesApi.MovieDetails getMovieDetails() {
+    public static MoviesApi.MovieDetails getMovieDetailsImpl() {
         if (retrofit == null) {
             initializeRetrofit();
         }
