@@ -29,14 +29,10 @@ import retrofit2.Response;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailFragment extends Fragment {
+    private final String TAG = MovieDetailFragment.class.getName();
+
     private Movie movie;
-
     private View view;
-
-    private RecyclerView recyclerView;
-
-    private TextView tagLine;
-    private TextView overview;
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
 
@@ -66,22 +62,18 @@ public class MovieDetailFragment extends Fragment {
 
         setupMovieImageViews();
         setupMovieDetailView();
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
-        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-        overview = (TextView) view.findViewById(R.id.text_view_overview);
     }
 
     private void setupMovieImageViews() {
         ImageView backdropImage = (ImageView) view.findViewById(R.id.image_view_backdrop);
         Glide.with(getActivity().getApplicationContext())
-                .load(BASE_IMAGE_URL + backdropImage)
+                .load(BASE_IMAGE_URL + movie.getBackdropPath())
                 .placeholder(R.drawable.image_placeholder)
                 .into(backdropImage);
 
         ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
         Glide.with(view.getContext())
-                .load(BASE_IMAGE_URL + posterImage)
+                .load(BASE_IMAGE_URL + movie.getPosterPath())
                 .placeholder(R.drawable.image_placeholder)
                 .into(posterImage);
     }
@@ -92,10 +84,6 @@ public class MovieDetailFragment extends Fragment {
 
         TextView releaseDate = (TextView) view.findViewById(R.id.text_view_release_date);
         releaseDate.setText(movie.getReleaseDate());
-
-        TextView duration = (TextView) view.findViewById(R.id.text_view_duration);
-        String runtime = Integer.toString(movie.getDuration()) + " minutes";
-        duration.setText(runtime);
 
         TextView rating = (TextView) view.findViewById(R.id.text_view_rating);
         String voteAverage = Double.toString(movie.getVoteAverage());
@@ -125,7 +113,6 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void updateUI() {
-        //Log.i("MovieDetailFragment", new String(movie.toString()));
         setupGenresList();
         setupAboutMovieView();
     }
@@ -133,6 +120,8 @@ public class MovieDetailFragment extends Fragment {
     private void setupGenresList() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
                 ((int) getResources().getDimension(R.dimen.padding_recycler_view)) * 2));
@@ -143,7 +132,14 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupAboutMovieView() {
+        TextView duration = (TextView) view.findViewById(R.id.text_view_duration);
+        String runtime = Integer.toString(movie.getDuration()) + " minutes";
+        duration.setText(runtime);
+
+        TextView tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
         tagLine.setText(movie.getTagLine());
+
+        TextView overview = (TextView) view.findViewById(R.id.text_view_overview);
         overview.setText(movie.getOverview());
     }
 
@@ -160,7 +156,6 @@ public class MovieDetailFragment extends Fragment {
             if (position == 0) {
                 return;
             }
-
             outRect.left = spacing;
         }
     }
