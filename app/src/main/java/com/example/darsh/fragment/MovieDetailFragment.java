@@ -91,7 +91,9 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void loadMovieDetails() {
-        Call<Movie> call = TmdbRestClient.getMovieDetailsImpl().getMovieDetails(movie.getId());
+        Call<Movie> call = TmdbRestClient.getInstance()
+                .getMovieDetailsImpl()
+                .getMovieDetails(movie.getId());
         Callback<Movie> callback = new Callback<Movie>() {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {

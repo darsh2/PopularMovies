@@ -16,7 +16,9 @@ public class TopRatedMoviesFragment extends MoviesListFragment {
     @Override
     protected void loadMovies() {
         int page = getPage();
-        Call<MoviesList> call = TmdbRestClient.getTopRatedMoviesImpl().getTopRatedMovies(page);
+        Call<MoviesList> call = TmdbRestClient.getInstance()
+                .getTopRatedMoviesImpl()
+                .getTopRatedMovies(page);
         Callback<MoviesList> callback = new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {

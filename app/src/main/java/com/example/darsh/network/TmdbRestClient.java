@@ -18,43 +18,47 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TmdbRestClient {
     private static String BASE_URL = "https://api.themoviedb.org/3/";
 
-    private static MoviesApi.PopularMovies popularMovies;
-    private static MoviesApi.TopRatedMovies topRatedMovies;
-    private static MoviesApi.MovieDetails movieDetails;
+    private MoviesApi.PopularMovies popularMovies;
+    private MoviesApi.TopRatedMovies topRatedMovies;
+    private MoviesApi.MovieDetails movieDetails;
 
-    private static Retrofit retrofit;
+    private Retrofit retrofit;
 
-    public static MoviesApi.PopularMovies getPopularMoviesImpl() {
-        if (retrofit == null) {
-            initializeRetrofit();
+    private static TmdbRestClient instance = null;
+
+    private TmdbRestClient() {
+        initializeRetrofit();
+    }
+
+    public static TmdbRestClient getInstance() {
+        if (instance == null) {
+            instance = new TmdbRestClient();
         }
+        return instance;
+    }
+
+    public MoviesApi.PopularMovies getPopularMoviesImpl() {
         if (popularMovies == null) {
             popularMovies = retrofit.create(MoviesApi.PopularMovies.class);
         }
         return popularMovies;
     }
 
-    public static MoviesApi.TopRatedMovies getTopRatedMoviesImpl() {
-        if (retrofit == null) {
-            initializeRetrofit();
-        }
+    public MoviesApi.TopRatedMovies getTopRatedMoviesImpl() {
         if (topRatedMovies == null) {
             topRatedMovies = retrofit.create(MoviesApi.TopRatedMovies.class);
         }
         return topRatedMovies;
     }
 
-    public static MoviesApi.MovieDetails getMovieDetailsImpl() {
-        if (retrofit == null) {
-            initializeRetrofit();
-        }
+    public MoviesApi.MovieDetails getMovieDetailsImpl() {
         if (movieDetails == null) {
             movieDetails = retrofit.create(MoviesApi.MovieDetails.class);
         }
         return movieDetails;
     }
 
-    private static void initializeRetrofit() {
+    private void initializeRetrofit() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
