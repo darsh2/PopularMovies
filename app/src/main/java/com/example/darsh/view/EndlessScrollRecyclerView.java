@@ -33,7 +33,7 @@ limitations under the License.
  * Modified by darshan on 18/4/16.
  */
 public class EndlessScrollRecyclerView extends RecyclerView {
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = EndlessScrollRecyclerView.class.getName();
     private final boolean DEBUG = false;
 
     private Adapter adapter;
@@ -62,22 +62,27 @@ public class EndlessScrollRecyclerView extends RecyclerView {
 
     private void initialiseView(Context context) {
         if (DEBUG) Log.i(TAG, "+initialiseView()");
+
         FooterView footerView = new FooterView(context);
         footerView.setVisibility(GONE);
         addFooterView(footerView);
+
         if (DEBUG) Log.i(TAG, "-initialiseView()");
     }
 
     private void addFooterView(final View view) {
         if (DEBUG) Log.i(TAG, "+addFooterView()");
+
         footerViews.clear();
         footerViews.add(view);
+
         if (DEBUG) Log.i(TAG, "-addFooterView()");
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
         if (DEBUG) Log.i(TAG, "+setAdapter()");
+
         this.adapter = adapter;
         this.adapter.registerAdapterDataObserver(dataObserver);
         wrapAdapter = new WrapAdapter(this.adapter, footerViews);
@@ -94,13 +99,13 @@ public class EndlessScrollRecyclerView extends RecyclerView {
 
         if (DEBUG) Log.i(TAG, "+onScrollStateChanged()");
 
-        if (DEBUG) {
+        /*if (DEBUG) {
             Log.i(TAG, "Child count: " + getLayoutManager().getChildCount());
             Log.i(TAG, "Last visible item position: " + ((GridLayoutManager) getLayoutManager()).findLastVisibleItemPosition());
             Log.i(TAG, "Item count: " + getLayoutManager().getItemCount());
             Log.i(TAG, "Scroll state: " + state);
             Log.i(TAG, "isLoading: " + isLoading);
-        }
+        }*/
 
         if (state == RecyclerView.SCROLL_STATE_IDLE &&
                 loadingListener != null &&
@@ -110,8 +115,6 @@ public class EndlessScrollRecyclerView extends RecyclerView {
             if (layoutManager instanceof GridLayoutManager) {
                 lastVisibleItemPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
             }
-
-
 
             if (layoutManager.getChildCount() > 0 &&
                     lastVisibleItemPosition >= layoutManager.getItemCount() - 1 &&
@@ -126,15 +129,14 @@ public class EndlessScrollRecyclerView extends RecyclerView {
                 }
                 loadingListener.onLoadMore();
             }
-
-            if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
-        } else {
-            if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
         }
+
+        if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
     }
 
     public void loadingComplete() {
         if (DEBUG) Log.i(TAG, "loadingComplete");
+
         isLoading = false;
         View footerView = footerViews.get(0);
         if (previousTotal < getLayoutManager().getItemCount()) {

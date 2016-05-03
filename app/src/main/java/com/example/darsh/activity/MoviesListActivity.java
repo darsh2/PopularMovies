@@ -43,8 +43,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
         if (tabLayout != null) {
             tabLayout.setupWithViewPager(viewPager);
         }
-
-
     }
 
     private void setupViewPager() {

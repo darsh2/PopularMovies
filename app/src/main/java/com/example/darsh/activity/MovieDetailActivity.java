@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.example.darsh.fragment.MovieDetailFragment;
-import com.example.darsh.helper.Constants;
 import com.example.darsh.popularmovies.R;
 
 /**

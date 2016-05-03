@@ -10,7 +10,7 @@
     <dimen name="layout_margin_overview">5dp</dimen>
 
     <dimen name="progress_bar_margin">10dp</dimen>
-    <dimen name="padding_recycler_view">1dp</dimen>
+    <dimen name="padding_recycler_view">2dp</dimen>
 
     <dimen name="radius_corner">16dp</dimen>
 </resources>

@@ -27,12 +27,11 @@ import java.util.List;
  */
 public class MoviesListFragment extends Fragment {
     private final String TAG = MoviesListFragment.class.getName();
-    private final boolean DEBUG = true;
+    private final boolean DEBUG = false;
 
     private ProgressBar progressBar;
 
     private EndlessScrollRecyclerView recyclerView;
-    private GridLayoutManager gridLayoutManager;
     private MoviesListAdapter adapter;
     private ArrayList<Movie> movies;
 
@@ -45,6 +44,8 @@ public class MoviesListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (DEBUG) Log.i(TAG, "+onCreate");
+
         if (savedInstanceState != null) {
             movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
@@ -56,11 +57,15 @@ public class MoviesListFragment extends Fragment {
                 if (DEBUG) Log.i(TAG, "Position: " + position);
             }
         }
+
+        if (DEBUG) Log.i(TAG, "-onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (DEBUG) Log.i(TAG, "+onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
@@ -69,23 +74,28 @@ public class MoviesListFragment extends Fragment {
         recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
         setUpRecyclerView();
 
+        if (DEBUG) Log.i(TAG, "-onCreateView");
+
         return view;
     }
 
     private void setUpRecyclerView() {
+        if (DEBUG) Log.i(TAG, "+setUpRecyclerView");
+
         int spanCount = getSpanCount();
-        gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.padding_recycler_view)));
         recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
             @Override
             public void onLoadMore() {
+                if (DEBUG) Log.i(TAG, "+onLoadMore");
+
                 page++;
-                if (page <= 1000) {
-                    loadMovies();
-                    recyclerView.loadingComplete();
-                }
+                loadMovies();
+
+                if (DEBUG) Log.i(TAG, "-onLoadMore");
             }
         });
 
@@ -96,6 +106,8 @@ public class MoviesListFragment extends Fragment {
         }
         adapter = new MoviesListAdapter(getActivity(), movies);
         recyclerView.setAdapter(adapter);
+
+        if (DEBUG) Log.i(TAG, "-setUpRecyclerView");
     }
 
     private int getSpanCount() {
@@ -113,6 +125,9 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        if (DEBUG) Log.i(TAG, "+onStart");
+
         /*
         If movies list is of size zero, movies have to be
         fetched from tmdb. Hence display progress bar.
@@ -124,14 +139,21 @@ public class MoviesListFragment extends Fragment {
         } else {
             recyclerView.scrollToPosition(position);
         }
+
+        if (DEBUG) Log.i(TAG, "-onStart");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        if (DEBUG) Log.i(TAG, "+onSaveInstanceState");
+
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
+
+        if (DEBUG) Log.i(TAG, "-onSaveInstanceState");
     }
 
     protected void loadMovies() {
@@ -144,6 +166,7 @@ public class MoviesListFragment extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             return;
         }
+        recyclerView.loadingComplete();
         adapter.notifyItemRangeInserted(numMovies, numMoviesDownloaded);
     }
 

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
@@ -34,7 +36,8 @@ public class MovieDetailFragment extends Fragment {
     private Movie movie;
     private View view;
 
-    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
+    private final String BACKDROP_IMAGE_URL = "http://image.tmdb.org/t/p/w500";
+    private final String POSTER_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,13 +70,19 @@ public class MovieDetailFragment extends Fragment {
     private void setupMovieImageViews() {
         ImageView backdropImage = (ImageView) view.findViewById(R.id.image_view_backdrop);
         Glide.with(getActivity().getApplicationContext())
-                .load(BASE_IMAGE_URL + movie.getBackdropPath())
+                .load(BACKDROP_IMAGE_URL + movie.getBackdropPath())
+                .asBitmap()
+                .format(DecodeFormat.PREFER_ARGB_8888)
                 .placeholder(R.drawable.image_placeholder)
                 .into(backdropImage);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager()
+                .getDefaultDisplay()
+                .getMetrics(displayMetrics);
 
         ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
         Glide.with(view.getContext())
-                .load(BASE_IMAGE_URL + movie.getPosterPath())
+                .load(POSTER_IMAGE_URL + movie.getPosterPath())
                 .placeholder(R.drawable.image_placeholder)
                 .into(posterImage);
     }
