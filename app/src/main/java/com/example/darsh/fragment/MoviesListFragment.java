@@ -44,7 +44,7 @@ public class MoviesListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (DEBUG) Log.i(TAG, "+onCreate");
+        if (DEBUG) Log.i(TAG, "+onCreate " + getTag());
 
         if (savedInstanceState != null) {
             movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
@@ -52,20 +52,18 @@ public class MoviesListFragment extends Fragment {
             position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
 
             if (movies != null) {
-                if (DEBUG) Log.i(TAG, movies.get(0).getTitle() + " " + movies.get(1).getTitle());
-                if (DEBUG) Log.i(TAG, "Page: " + page);
-                if (DEBUG) Log.i(TAG, "Position: " + position);
+                if (DEBUG) Log.i(TAG, movies.get(0).getTitle() + " " + movies.get(1).getTitle( ) + getTag());
+                if (DEBUG) Log.i(TAG, "Page: " + page + " " + getTag());
+                if (DEBUG) Log.i(TAG, "Position: " + position + " " + getTag());
             }
         }
 
-        if (DEBUG) Log.i(TAG, "-onCreate");
+        if (DEBUG) Log.i(TAG, "-onCreate " + getTag());
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (DEBUG) Log.i(TAG, "+onCreateView");
-
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
@@ -74,14 +72,10 @@ public class MoviesListFragment extends Fragment {
         recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
         setUpRecyclerView();
 
-        if (DEBUG) Log.i(TAG, "-onCreateView");
-
         return view;
     }
 
     private void setUpRecyclerView() {
-        if (DEBUG) Log.i(TAG, "+setUpRecyclerView");
-
         int spanCount = getSpanCount();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -90,12 +84,8 @@ public class MoviesListFragment extends Fragment {
         recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
             @Override
             public void onLoadMore() {
-                if (DEBUG) Log.i(TAG, "+onLoadMore");
-
                 page++;
                 loadMovies();
-
-                if (DEBUG) Log.i(TAG, "-onLoadMore");
             }
         });
 
@@ -106,8 +96,6 @@ public class MoviesListFragment extends Fragment {
         }
         adapter = new MoviesListAdapter(getActivity(), movies);
         recyclerView.setAdapter(adapter);
-
-        if (DEBUG) Log.i(TAG, "-setUpRecyclerView");
     }
 
     private int getSpanCount() {
@@ -126,34 +114,38 @@ public class MoviesListFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (DEBUG) Log.i(TAG, "+onStart");
+        if (DEBUG) Log.i(TAG, "onStart " + getTag());
 
         /*
         If movies list is of size zero, movies have to be
         fetched from tmdb. Hence display progress bar.
          */
         if (movies.size() == 0) {
-            if (DEBUG) Log.i(TAG, "First time load");
+            //if (DEBUG) Log.i(TAG, "First time load " + getTag());
             progressBar.setVisibility(View.VISIBLE);
             loadMovies();
         } else {
             recyclerView.scrollToPosition(position);
         }
+    }
 
-        if (DEBUG) Log.i(TAG, "-onStart");
+    @Override
+    public void onStop() {
+        super.onStop();
+        position = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (DEBUG) Log.i(TAG, "+onSaveInstanceState");
+        if (DEBUG) Log.i(TAG, "+onSaveInstanceState " + getTag());
 
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
 
-        if (DEBUG) Log.i(TAG, "-onSaveInstanceState");
+        if (DEBUG) Log.i(TAG, "-onSaveInstanceState " + getTag());
     }
 
     protected void loadMovies() {

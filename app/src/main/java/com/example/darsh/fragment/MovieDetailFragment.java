@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +32,7 @@ import retrofit2.Response;
  */
 public class MovieDetailFragment extends Fragment {
     private final String TAG = MovieDetailFragment.class.getName();
+    private final boolean DEBUG = true;
 
     private Movie movie;
     private View view;

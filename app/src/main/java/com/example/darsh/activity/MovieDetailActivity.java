@@ -13,6 +13,7 @@ import com.example.darsh.popularmovies.R;
  */
 public class MovieDetailActivity extends AppCompatActivity {
     private final String TAG = MovieDetailActivity.class.getName();
+    private final boolean DEBUG = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

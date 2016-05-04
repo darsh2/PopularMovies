@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
@@ -29,6 +30,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
+
+        if (DEBUG) Log.i(TAG, "onCreate");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
