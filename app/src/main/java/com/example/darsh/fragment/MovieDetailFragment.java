@@ -75,10 +75,6 @@ public class MovieDetailFragment extends Fragment {
                 .format(DecodeFormat.PREFER_ARGB_8888)
                 .placeholder(R.drawable.image_placeholder)
                 .into(backdropImage);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager()
-                .getDefaultDisplay()
-                .getMetrics(displayMetrics);
 
         ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
         Glide.with(view.getContext())
@@ -135,7 +131,7 @@ public class MovieDetailFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
-                ((int) getResources().getDimension(R.dimen.padding_recycler_view)) * 2));
+                (int) getResources().getDimension(R.dimen.spacing_genre)));
 
         GenresListAdapter adapter = new GenresListAdapter(movie.getGenres());
         recyclerView.setAdapter(adapter);

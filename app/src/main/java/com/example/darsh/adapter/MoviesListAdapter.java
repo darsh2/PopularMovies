@@ -2,11 +2,13 @@ package com.example.darsh.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.darsh.model.Movie;
@@ -34,10 +36,10 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ImageView imageView = (ImageView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.grid_view_item_movie, parent, false);
-        final ViewHolder viewHolder = new ViewHolder(imageView);
-        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+        CardView cardView = (CardView) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recycler_view_item_movie, parent, false);
+        final ViewHolder viewHolder = new ViewHolder(cardView);
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onMovieClickListener != null) {
@@ -53,7 +55,10 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
         Glide.with(context)
                 .load(BASE_URL + movies.get(position).getPosterPath())
                 .placeholder(R.drawable.image_placeholder)
-                .into(holder.imageView);
+                .into(holder.poster);
+        holder.title.setText(movies.get(position).getTitle());
+        String rating = Double.toString(movies.get(position).getVoteAverage());
+        holder.rating.setText(rating);
     }
 
     @Override
@@ -62,11 +67,18 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
+        public CardView cardView;
 
-        public ViewHolder(ImageView imageView) {
-            super(imageView);
-            this.imageView = imageView;
+        public ImageView poster;
+        public TextView title;
+        public TextView rating;
+
+        public ViewHolder(CardView cardView) {
+            super(cardView);
+            this.cardView = cardView;
+            this.poster = (ImageView) cardView.findViewById(R.id.image_view_poster);
+            this.title = (TextView) cardView.findViewById(R.id.text_view_title);
+            this.rating = (TextView) cardView.findViewById(R.id.text_view_rating);
         }
     }
 

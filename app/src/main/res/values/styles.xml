@@ -9,9 +9,9 @@
     </style>
     
     <style name="CardViewStyle" parent="android:Widget">
-        <item name="android:paddingTop">@dimen/padding_widget</item>
-        <item name="android:paddingRight">@dimen/padding_widget</item>
-        <item name="android:paddingBottom">@dimen/padding_widget</item>
-        <item name="android:paddingLeft">@dimen/padding_widget</item>
+        <item name="android:paddingTop">@dimen/padding</item>
+        <item name="android:paddingRight">@dimen/padding</item>
+        <item name="android:paddingBottom">@dimen/padding</item>
+        <item name="android:paddingLeft">@dimen/padding</item>
     </style>
 </resources>

@@ -86,7 +86,7 @@ public class MoviesListFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
-                (int) getResources().getDimension(R.dimen.padding_recycler_view)));
+                (int) getResources().getDimension(R.dimen.spacing_movie)));
         recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
             @Override
             public void onLoadMore() {
@@ -191,13 +191,6 @@ public class MoviesListFragment extends Fragment {
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            /*
-            Get equal spacing among views in GridLayoutManager
-            Code taken from here: http://stackoverflow.com/a/30794046/3946664
-             /
-            super.getItemOffsets(outRect, view, parent, state);
-            outRect.set(spacing, spacing, spacing, spacing);*/
-
             /*
             Initial implementation, seems computationally expensive
             due to modulus operation.

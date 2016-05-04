@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:layout_marginLeft="@dimen/padding_widget"
+        android:layout_marginLeft="@dimen/padding"
         android:orientation="vertical">
 
         <TextView
