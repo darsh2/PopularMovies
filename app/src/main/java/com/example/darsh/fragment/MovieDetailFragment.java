@@ -8,11 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -145,9 +145,20 @@ public class MovieDetailFragment extends Fragment {
         duration.setText(runtime);
 
         TextView tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-        tagLine.setText(movie.getTagLine());
+        boolean hasTagLine = true;
+        if (movie.getTagLine() == null || movie.getTagLine().length() == 0) {
+            hasTagLine = false;
+            tagLine.setVisibility(View.GONE);
+        } else {
+            tagLine.setText(movie.getTagLine());
+        }
 
         TextView overview = (TextView) view.findViewById(R.id.text_view_overview);
+        if (!hasTagLine) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 0, 0);
+            overview.setLayoutParams(layoutParams);
+        }
         overview.setText(movie.getOverview());
     }
 
