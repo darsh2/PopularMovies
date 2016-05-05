@@ -10,6 +10,13 @@ Current features:
 
 Screencast can be found [here](https://youtu.be/Pym0W35S7Gc).
 
+## How to use
+Either clone this repository using git or download as zip (and unzip). In app/build.gradle file,
+```gradle
+buildConfigField "String", "TMDB_API_KEY", "\"YOUR_TMDB_API_KEY\""
+```
+replace YOUR_TMDB_API_KEY with your api key for TMDb.
+
 ## Attribution
 This product uses the [TMDb API](https://www.themoviedb.org/documentation/api/) but is not endorsed or certified by TMDb.
 
