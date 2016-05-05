@@ -20,8 +20,6 @@ import java.util.ArrayList;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.ViewHolder> {
-    private final String TAG = MoviesListAdapter.class.getName();
-
     private OnMovieClickListener onMovieClickListener;
     private Context context;
     private ArrayList<Movie> movies;

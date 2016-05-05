@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,9 +32,6 @@ limitations under the License.
  * Modified by darshan on 18/4/16.
  */
 public class EndlessScrollRecyclerView extends RecyclerView {
-    private final String TAG = EndlessScrollRecyclerView.class.getName();
-    private final boolean DEBUG = false;
-
     private Adapter adapter;
     private Adapter wrapAdapter;
 
@@ -61,52 +57,29 @@ public class EndlessScrollRecyclerView extends RecyclerView {
     }
 
     private void initialiseView(Context context) {
-        if (DEBUG) Log.i(TAG, "+initialiseView()");
-
         FooterView footerView = new FooterView(context);
         footerView.setVisibility(GONE);
         addFooterView(footerView);
-
-        if (DEBUG) Log.i(TAG, "-initialiseView()");
     }
 
     private void addFooterView(final View view) {
-        if (DEBUG) Log.i(TAG, "+addFooterView()");
-
         footerViews.clear();
         footerViews.add(view);
-
-        if (DEBUG) Log.i(TAG, "-addFooterView()");
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-        if (DEBUG) Log.i(TAG, "+setAdapter()");
-
         this.adapter = adapter;
         this.adapter.registerAdapterDataObserver(dataObserver);
         wrapAdapter = new WrapAdapter(this.adapter, footerViews);
         super.setAdapter(wrapAdapter);
 
         dataObserver.onChanged();
-
-        if (DEBUG) Log.i(TAG, "-setAdapter()");
     }
 
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
-
-        if (DEBUG) Log.i(TAG, "+onScrollStateChanged()");
-
-        /*if (DEBUG) {
-            Log.i(TAG, "Child count: " + getLayoutManager().getChildCount());
-            Log.i(TAG, "Last visible item position: " + ((GridLayoutManager) getLayoutManager()).findLastVisibleItemPosition());
-            Log.i(TAG, "Item count: " + getLayoutManager().getItemCount());
-            Log.i(TAG, "Scroll state: " + state);
-            Log.i(TAG, "isLoading: " + isLoading);
-        }*/
-
         if (state == RecyclerView.SCROLL_STATE_IDLE &&
                 loadingListener != null &&
                 !isLoading) {
@@ -130,13 +103,9 @@ public class EndlessScrollRecyclerView extends RecyclerView {
                 loadingListener.onLoadMore();
             }
         }
-
-        if (DEBUG) Log.i(TAG, "-onScrollStateChanged()");
     }
 
     public void loadingComplete() {
-        if (DEBUG) Log.i(TAG, "loadingComplete");
-
         isLoading = false;
         View footerView = footerViews.get(0);
         if (previousTotal < getLayoutManager().getItemCount()) {

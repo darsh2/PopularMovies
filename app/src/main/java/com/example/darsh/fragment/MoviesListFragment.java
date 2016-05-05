@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,6 @@ import java.util.List;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListFragment extends Fragment {
-    private final String TAG = MoviesListFragment.class.getName();
-    private final boolean DEBUG = false;
-
     private ProgressBar progressBar;
 
     private EndlessScrollRecyclerView recyclerView;
@@ -43,22 +39,11 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (DEBUG) Log.i(TAG, "+onCreate " + getTag());
-
         if (savedInstanceState != null) {
             movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
             position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
-
-            if (movies != null) {
-                if (DEBUG) Log.i(TAG, movies.get(0).getTitle() + " " + movies.get(1).getTitle( ) + getTag());
-                if (DEBUG) Log.i(TAG, "Page: " + page + " " + getTag());
-                if (DEBUG) Log.i(TAG, "Position: " + position + " " + getTag());
-            }
         }
-
-        if (DEBUG) Log.i(TAG, "-onCreate " + getTag());
     }
 
     @Nullable
@@ -113,15 +98,11 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        if (DEBUG) Log.i(TAG, "onStart " + getTag());
-
         /*
         If movies list is of size zero, movies have to be
         fetched from tmdb. Hence display progress bar.
          */
         if (movies.size() == 0) {
-            //if (DEBUG) Log.i(TAG, "First time load " + getTag());
             progressBar.setVisibility(View.VISIBLE);
             loadMovies();
         } else {
@@ -138,14 +119,9 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        if (DEBUG) Log.i(TAG, "+onSaveInstanceState " + getTag());
-
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
-
-        if (DEBUG) Log.i(TAG, "-onSaveInstanceState " + getTag());
     }
 
     protected void loadMovies() {

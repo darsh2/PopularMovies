@@ -15,9 +15,6 @@ import java.util.List;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailActivity extends AppCompatActivity {
-    private final String TAG = MovieDetailActivity.class.getName();
-    private final boolean DEBUG = false;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

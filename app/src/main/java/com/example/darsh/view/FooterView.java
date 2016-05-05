@@ -2,7 +2,6 @@ package com.example.darsh.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -31,9 +30,6 @@ limitations under the License.
  * Modified by darshan on 18/4/16.
  */
 public class FooterView extends LinearLayout {
-    private final String TAG = FooterView.class.getName();
-    private final boolean DEBUG = false;
-
     public FooterView(Context context) {
         this(context, null);
     }
@@ -71,19 +67,16 @@ public class FooterView extends LinearLayout {
     public void setState(int state) {
         switch (state) {
             case Constants.LOADING: {
-                if (DEBUG) Log.i(TAG, "Loading");
                 setVisibility(VISIBLE);
                 break;
             }
 
             case Constants.DONE: {
-                if (DEBUG) Log.i(TAG, "Done");
                 setVisibility(INVISIBLE);
                 break;
             }
 
             case Constants.NO_MORE: {
-                if (DEBUG) Log.i(TAG, "Gone");
                 setVisibility(GONE);
                 break;
             }

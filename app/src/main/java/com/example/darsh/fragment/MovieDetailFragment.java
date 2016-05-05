@@ -31,9 +31,6 @@ import retrofit2.Response;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailFragment extends Fragment {
-    private final String TAG = MovieDetailFragment.class.getName();
-    private final boolean DEBUG = false;
-
     private Movie movie;
     private View view;
 
