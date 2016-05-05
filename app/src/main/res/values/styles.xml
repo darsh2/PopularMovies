@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--http://stackoverflow.com/questions/31425427/appcompat-v22-set-default-textcolor-for-textview/31460431#31460431-->
+        <item name="android:textColorTertiary">@color/black</item>
     </style>
     
     <style name="CardViewStyle" parent="android:Widget">
