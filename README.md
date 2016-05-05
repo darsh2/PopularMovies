@@ -16,6 +16,7 @@ This product uses the [TMDb API](https://www.themoviedb.org/documentation/api/) 
 ## Libraries used
 * [Glide](https://github.com/bumptech/glide) - for image loading/caching
 * [Retrofit](https://github.com/square/retrofit) - for accessing TMDb api
+* [XRecyclerView](https://github.com/jianghejie/XRecyclerView) - modified [here](https://github.com/darsh2/PopularMovies/tree/master/app/src/main/java/com/example/darsh/view) for suiting app needs to support endless scroll
 
 ## License
     Copyright 2016 Darshan Dorai.
