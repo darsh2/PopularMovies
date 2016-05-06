@@ -126,6 +126,18 @@ public class EndlessScrollRecyclerView extends RecyclerView {
         previousTotal = getLayoutManager().getItemCount();
     }
 
+    public void error(int code) {
+        if (footerViews == null || footerViews.size() == 0) {
+            return;
+        }
+        View footerView = footerViews.get(0);
+        if (footerView instanceof FooterView) {
+            ((FooterView) footerView).setState(code);
+        } else {
+            footerView.setVisibility(VISIBLE);
+        }
+    }
+
     private final RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
         @Override
         public void onChanged() {

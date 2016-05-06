@@ -101,17 +101,20 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 if (!response.isSuccessful()) {
-                    return;
+                    movie.setTagLine(getString(R.string.server_error));
+
+                } else {
+                    movie.setGenres(response.body().getGenres());
+                    movie.setDuration(response.body().getDuration());
+                    movie.setTagLine(response.body().getTagLine());
                 }
-                movie.setGenres(response.body().getGenres());
-                movie.setDuration(response.body().getDuration());
-                movie.setTagLine(response.body().getTagLine());
                 updateUI();
             }
 
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
-
+                movie.setTagLine(getString(R.string.network_error));
+                updateUI();
             }
         };
         call.enqueue(callback);

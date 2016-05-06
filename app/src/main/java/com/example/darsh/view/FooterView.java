@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.darsh.helper.Constants;
 import com.example.darsh.popularmovies.R;
@@ -30,6 +30,8 @@ limitations under the License.
  * Modified by darshan on 18/4/16.
  */
 public class FooterView extends LinearLayout {
+    private TextView textView;
+
     public FooterView(Context context) {
         this(context, null);
     }
@@ -58,15 +60,15 @@ public class FooterView extends LinearLayout {
         int margin = (int) getResources().getDimension(R.dimen.progress_bar_margin);
         layoutParams.setMargins(margin, margin, margin, margin);
 
-        ProgressBar progressBar = new ProgressBar(context);
-        progressBar.setLayoutParams(layoutParams);
-        progressBar.setIndeterminate(true);
-        addView(progressBar);
+        textView = new TextView(context);
+        textView.setLayoutParams(layoutParams);
+        addView(textView);
     }
 
     public void setState(int state) {
         switch (state) {
             case Constants.LOADING: {
+                textView.setText(getContext().getString(R.string.loading));
                 setVisibility(VISIBLE);
                 break;
             }
@@ -78,6 +80,18 @@ public class FooterView extends LinearLayout {
 
             case Constants.NO_MORE: {
                 setVisibility(GONE);
+                break;
+            }
+
+            case Constants.NETWORK_ERROR: {
+                textView.setText(getContext().getString(R.string.network_error));
+                setVisibility(VISIBLE);
+                break;
+            }
+
+            case Constants.SERVER_ERROR: {
+                textView.setText(getContext().getString(R.string.server_error));
+                setVisibility(VISIBLE);
                 break;
             }
         }

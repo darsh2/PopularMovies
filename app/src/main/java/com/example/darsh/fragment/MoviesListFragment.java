@@ -138,6 +138,14 @@ public class MoviesListFragment extends Fragment {
         adapter.notifyItemRangeInserted(numMovies, numMoviesDownloaded);
     }
 
+    protected void retrievalError(int code) {
+        if (page == 1) {
+            progressBar.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+        recyclerView.error(code);
+    }
+
     protected void addMovies(List<Movie> movies) {
         this.movies.addAll(movies);
     }
