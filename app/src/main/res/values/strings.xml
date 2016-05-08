@@ -4,6 +4,7 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="loading">Loading&#8230;</string>
-    <string name="network_error">Network Error. Please check if device is connected to the internet.</string>
+    <string name="network_error_movie_list">Please check if device is connected to the internet. Scroll down to refresh.</string>
+    <string name="network_error_movie_detail">Please check if device is connected to the internet.</string>
     <string name="server_error">Oops! Something is wrong at our end. Please try again later.</string>
 </resources>

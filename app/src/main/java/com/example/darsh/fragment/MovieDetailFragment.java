@@ -113,7 +113,7 @@ public class MovieDetailFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
-                movie.setTagLine(getString(R.string.network_error));
+                movie.setTagLine(getString(R.string.network_error_movie_detail));
                 updateUI();
             }
         };

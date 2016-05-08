@@ -1,20 +1,12 @@
 package com.example.darsh.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,9 +125,12 @@ public class MoviesListFragment extends Fragment {
     }
 
     protected void loadMovies() {
+        recyclerView.setIsLoading(true);
     }
 
     protected void updateList(int numMovies, int numMoviesDownloaded) {
+        recyclerView.setIsLoading(false);
+
         if (page == 1) {
             adapter.notifyDataSetChanged();
             progressBar.setVisibility(View.INVISIBLE);
@@ -147,6 +142,8 @@ public class MoviesListFragment extends Fragment {
     }
 
     protected void retrievalError(int code) {
+        recyclerView.setIsLoading(false);
+
         if (page == 1) {
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -201,36 +198,5 @@ public class MoviesListFragment extends Fragment {
                 outRect.left = spacing;
             }
         }
-    }
-
-    private BroadcastReceiver networkMonitor = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() == null) {
-                Log.i(MoviesListFragment.class.getName(), "``````````````````````");
-                return;
-            }
-
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
-            Log.i(MoviesListFragment.class.getName(), Boolean.toString(isConnected));
-        }
-    };
-
-    @Override
-    public void onResume() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        getContext().registerReceiver(networkMonitor, intentFilter);
-        //LocalBroadcastManager.getInstance(getContext()).registerReceiver(networkMonitor, intentFilter);
-        super.onPause();
-    }
-
-    @Override
-    public void onPause() {
-        getContext().unregisterReceiver(networkMonitor);
-        //LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(networkMonitor);
-        super.onPause();
     }
 }

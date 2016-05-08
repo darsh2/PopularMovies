@@ -90,11 +90,10 @@ public class EndlessScrollRecyclerView extends RecyclerView {
             }
 
             if (layoutManager.getChildCount() > 0 &&
-                    lastVisibleItemPosition >= layoutManager.getItemCount() - 1 &&
+                    lastVisibleItemPosition >= layoutManager.getItemCount() - footerViews.size() &&
                     layoutManager.getItemCount() > layoutManager.getChildCount() &&
                     !isNoMore) {
                 View footerView = footerViews.get(0);
-                isLoading = true;
                 if (footerView instanceof FooterView) {
                     ((FooterView) footerView).setState(Constants.LOADING);
                 } else {
@@ -106,7 +105,6 @@ public class EndlessScrollRecyclerView extends RecyclerView {
     }
 
     public void loadingComplete() {
-        isLoading = false;
         View footerView = footerViews.get(0);
         if (previousTotal < getLayoutManager().getItemCount()) {
             if (footerView instanceof FooterView) {
@@ -136,6 +134,10 @@ public class EndlessScrollRecyclerView extends RecyclerView {
         } else {
             footerView.setVisibility(VISIBLE);
         }
+    }
+
+    public void setIsLoading(boolean isLoading) {
+        this.isLoading = isLoading;
     }
 
     private final RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {

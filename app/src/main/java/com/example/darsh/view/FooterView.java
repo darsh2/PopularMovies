@@ -84,7 +84,7 @@ public class FooterView extends LinearLayout {
             }
 
             case Constants.NETWORK_ERROR: {
-                textView.setText(getContext().getString(R.string.network_error));
+                textView.setText(getContext().getString(R.string.network_error_movie_list));
                 setVisibility(VISIBLE);
                 break;
             }
