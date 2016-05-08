@@ -3,11 +3,13 @@ package com.example.darsh.fragment;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +33,29 @@ import retrofit2.Response;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailFragment extends Fragment {
+    private final String TAG = MovieDetailFragment.class.getName();
+    private final boolean DEBUG = true;
+
     private Movie movie;
-    private View view;
+
+    /*
+    List of views whose references are required to be updated
+    once the network fetches data about them. View references are
+    obtained beforehand for a performance gain.
+    Movie duration, horizontally scrollable genres recyclerView,
+    tag line text are updated after a successful api query.
+     */
+    private TextView duration;
+    private TextView tagLine;
+    private RecyclerView recyclerView;
+
+    /*
+    Reference to the overview text is stored as absence of tag line
+    would leave unused space below the list of movie genres.
+    In such a scenario, remove margins of overview text.
+     */
+    private TextView overview;
+
 
     private final String BACKDROP_IMAGE_URL = "http://image.tmdb.org/t/p/w500";
     private final String POSTER_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
@@ -40,48 +63,27 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (DEBUG) Log.i(TAG, "+onCreate");
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
             loadMovieDetails();
         }
+        if (DEBUG) Log.i(TAG, "-onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (DEBUG) Log.i(TAG, "+onCreateView");
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        this.view = view;
-        setupView();
-        return view;
-    }
 
-    private void setupView() {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(movie.getTitle());
 
-        setupMovieImageViews();
-        setupMovieDetailView();
-    }
-
-    private void setupMovieImageViews() {
-        ImageView backdropImage = (ImageView) view.findViewById(R.id.image_view_backdrop);
-        Glide.with(getActivity().getApplicationContext())
-                .load(BACKDROP_IMAGE_URL + movie.getBackdropPath())
-                .asBitmap()
-                .format(DecodeFormat.PREFER_ARGB_8888)
-                .placeholder(R.drawable.image_placeholder)
-                .into(backdropImage);
-
-        ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
-        Glide.with(view.getContext())
-                .load(POSTER_IMAGE_URL + movie.getPosterPath())
-                .placeholder(R.drawable.image_placeholder)
-                .into(posterImage);
-    }
-
-    private void setupMovieDetailView() {
+        /*
+        Setting up movie detail view
+         */
         TextView title = (TextView) view.findViewById(R.id.text_view_title);
         title.setText(movie.getTitle());
 
@@ -91,6 +93,45 @@ public class MovieDetailFragment extends Fragment {
         TextView rating = (TextView) view.findViewById(R.id.text_view_rating);
         String voteAverage = Double.toString(movie.getVoteAverage());
         rating.setText(voteAverage);
+
+        overview = (TextView) view.findViewById(R.id.text_view_overview);
+        overview.setText(movie.getOverview());
+
+        /*
+        Initialise layout of genres RecyclerView beforehand.
+        Obtain references to duration and tag line TextViews.
+         */
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new SpacingItemDecoration(
+                (int) getResources().getDimension(R.dimen.spacing_genre)));
+
+        duration = (TextView) view.findViewById(R.id.text_view_duration);
+        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
+
+        /*
+        Load backdrop and poster images.
+         */
+        ImageView backdropImage = (ImageView) view.findViewById(R.id.image_view_backdrop);
+        ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
+
+        Glide.with(view.getContext())
+                .load(BACKDROP_IMAGE_URL + movie.getBackdropPath())
+                .asBitmap()
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .placeholder(R.drawable.image_placeholder)
+                .into(backdropImage);
+
+        Glide.with(view.getContext())
+                .load(POSTER_IMAGE_URL + movie.getPosterPath())
+                .placeholder(R.drawable.image_placeholder)
+                .into(posterImage);
+
+
+        if (DEBUG) Log.i(TAG, "-onCreateView");
+        return view;
     }
 
     private void loadMovieDetails() {
@@ -121,45 +162,47 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void updateUI() {
+        if (DEBUG) Log.i(TAG, "+updateUI");
         setupGenresList();
         setupAboutMovieView();
+        if (DEBUG) Log.i(TAG, "-updateUI");
     }
 
     private void setupGenresList() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new SpacingItemDecoration(
-                (int) getResources().getDimension(R.dimen.spacing_genre)));
-
-        GenresListAdapter adapter = new GenresListAdapter(movie.getGenres());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
+        if (DEBUG) Log.i(TAG, "+setupGenresList");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                GenresListAdapter adapter = new GenresListAdapter(movie.getGenres());
+                recyclerView.setAdapter(adapter);
+                recyclerView.setHasFixedSize(true);
+            }
+        }, 500);
+        if (DEBUG) Log.i(TAG, "-setupGenresList");
     }
 
     private void setupAboutMovieView() {
-        TextView duration = (TextView) view.findViewById(R.id.text_view_duration);
+        if (DEBUG) Log.i(TAG, "+setupAboutMovieView");
         String runtime = Integer.toString(movie.getDuration()) + " minutes";
         duration.setText(runtime);
 
-        TextView tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-        boolean hasTagLine = true;
+        /*
+        If the movie does not contain a tag line,
+        remove margins of overview textview to get
+        rid of unused space in layout.
+         */
         if (movie.getTagLine() == null || movie.getTagLine().length() == 0) {
-            hasTagLine = false;
             tagLine.setVisibility(View.GONE);
-        } else {
-            tagLine.setText(movie.getTagLine());
-        }
 
-        TextView overview = (TextView) view.findViewById(R.id.text_view_overview);
-        if (!hasTagLine) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(0, 0, 0, 0);
             overview.setLayoutParams(layoutParams);
+            overview.invalidate();
+            return;
         }
-        overview.setText(movie.getOverview());
+        tagLine.setText(movie.getTagLine());
+        if (DEBUG) Log.i(TAG, "-setupAboutMovieView");
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {
