@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +32,6 @@ import retrofit2.Response;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailFragment extends Fragment {
-    private final String TAG = MovieDetailFragment.class.getName();
-    private final boolean DEBUG = true;
-
     private Movie movie;
 
     /*
@@ -63,19 +59,16 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (DEBUG) Log.i(TAG, "+onCreate");
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
             loadMovieDetails();
         }
-        if (DEBUG) Log.i(TAG, "-onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (DEBUG) Log.i(TAG, "+onCreateView");
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -130,7 +123,6 @@ public class MovieDetailFragment extends Fragment {
                 .into(posterImage);
 
 
-        if (DEBUG) Log.i(TAG, "-onCreateView");
         return view;
     }
 
@@ -162,14 +154,11 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void updateUI() {
-        if (DEBUG) Log.i(TAG, "+updateUI");
         setupGenresList();
         setupAboutMovieView();
-        if (DEBUG) Log.i(TAG, "-updateUI");
     }
 
     private void setupGenresList() {
-        if (DEBUG) Log.i(TAG, "+setupGenresList");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -178,11 +167,9 @@ public class MovieDetailFragment extends Fragment {
                 recyclerView.setHasFixedSize(true);
             }
         }, 500);
-        if (DEBUG) Log.i(TAG, "-setupGenresList");
     }
 
     private void setupAboutMovieView() {
-        if (DEBUG) Log.i(TAG, "+setupAboutMovieView");
         String runtime = Integer.toString(movie.getDuration()) + " minutes";
         duration.setText(runtime);
 
@@ -202,7 +189,6 @@ public class MovieDetailFragment extends Fragment {
             return;
         }
         tagLine.setText(movie.getTagLine());
-        if (DEBUG) Log.i(TAG, "-setupAboutMovieView");
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {

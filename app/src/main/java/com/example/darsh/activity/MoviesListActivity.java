@@ -44,6 +44,14 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
 
     private void setupViewPager() {
         FragmentTabsAdapter adapter = new FragmentTabsAdapter(getSupportFragmentManager());
+        /*
+        MoviesListFragment is the superclass Fragment.
+        PopularMoviesFragment and TopRatedMoviesFragment are subclasses of this
+        that just override the loadMovies().
+        Considering that for stage 2, even a favourite movies tab will be added,
+        then FavouriteMoviesFragment can just extend from MoviesListFragment and
+        override implementation of loadMovies().
+         */
         adapter.addFragment(new PopularMoviesFragment(), getString(R.string.popular));
         adapter.addFragment(new TopRatedMoviesFragment(), getString(R.string.top_rated));
         viewPager.setAdapter(adapter);
