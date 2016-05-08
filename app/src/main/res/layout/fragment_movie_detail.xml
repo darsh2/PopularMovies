@@ -53,7 +53,7 @@
             android:layout_margin="@dimen/padding"
             android:orientation="vertical">
 
-            <include layout="@layout/movie_detail"/>
+            <include layout="@layout/movie_about"/>
 
             <include layout="@layout/view_divider"/>
 
