@@ -89,10 +89,11 @@ public class EndlessScrollRecyclerView extends RecyclerView {
                 lastVisibleItemPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
             }
 
-            if (layoutManager.getChildCount() > 0 &&
+            if ((layoutManager.getChildCount() > 0 &&
                     lastVisibleItemPosition >= layoutManager.getItemCount() - footerViews.size() &&
                     layoutManager.getItemCount() > layoutManager.getChildCount() &&
-                    !isNoMore) {
+                    !isNoMore) ||
+                    (lastVisibleItemPosition == 0 && layoutManager.getChildCount() == 1 && layoutManager.getItemCount() == 1)) {
                 View footerView = footerViews.get(0);
                 if (footerView instanceof FooterView) {
                     ((FooterView) footerView).setState(Constants.LOADING);

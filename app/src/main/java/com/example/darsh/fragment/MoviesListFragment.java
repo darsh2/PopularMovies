@@ -39,6 +39,10 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
+        Load list of movies, scroll position, and page number
+        from savedInstanceState to restore state.
+         */
         if (savedInstanceState != null) {
             movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
@@ -69,11 +73,24 @@ public class MoviesListFragment extends Fragment {
         recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
             @Override
             public void onLoadMore() {
-                page++;
+                /*
+                If child count is 1, only the footerView is
+                shown. This implies that the first page is
+                yet to load. Hence increment page number
+                only if number of children is greater than 1.
+                 */
+                if (recyclerView.getChildCount() > 1) {
+                    page++;
+                }
                 loadMovies();
             }
         });
 
+        /*
+        If movies is null, then this is the first
+        time the fragment is loaded. Initialise movies,
+        page number and scroll position to default values.
+         */
         if (movies == null) {
             movies = new ArrayList<>();
             page = 1;
@@ -83,6 +100,10 @@ public class MoviesListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    /*
+    Set number of columns in recyclerView
+    depending on device orientation.
+     */
     private int getSpanCount() {
         int spanCount = 2;
         if (getActivity() != null) {
@@ -113,6 +134,9 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        /*
+        To keep track of scroll state position.
+         */
         position = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
     }
 
@@ -131,6 +155,10 @@ public class MoviesListFragment extends Fragment {
     protected void updateList(int numMovies, int numMoviesDownloaded) {
         recyclerView.setIsLoading(false);
 
+        /*
+        If it was the first page that was loaded,
+        progressBar must be visible. Make it invisible.
+         */
         if (page == 1) {
             adapter.notifyDataSetChanged();
             progressBar.setVisibility(View.INVISIBLE);
