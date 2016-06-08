@@ -2,6 +2,7 @@ package com.example.darsh.network;
 
 import com.example.darsh.model.Movie;
 import com.example.darsh.model.MoviesList;
+import com.example.darsh.model.MovieVideos;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -25,5 +26,10 @@ public class MoviesApi {
     public interface MovieDetails {
         @GET("movie/{id}")
         Call<Movie> getMovieDetails(@Path("id") Integer id);
+    }
+
+    public interface MovieDetailVideos {
+        @GET("movie/{id}/videos")
+        Call<MovieVideos> getMovieVideos(@Path("id") Integer id);
     }
 }

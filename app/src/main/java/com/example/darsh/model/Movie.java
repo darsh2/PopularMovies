@@ -76,6 +76,7 @@ public class Movie implements Parcelable {
     @SerializedName("vote_average")
     private double voteAverage;
 
+    private ArrayList<MovieVideo> movieVideos = new ArrayList<>();
 
     public Movie() {
     }
@@ -100,6 +101,10 @@ public class Movie implements Parcelable {
         this.popularity = source.readDouble();
         this.voteCount = source.readLong();
         this.voteAverage = source.readDouble();
+        source.readTypedList(this.movieVideos, MovieVideo.CREATOR);
+        if (movieVideos == null) {
+            movieVideos = new ArrayList<>();
+        }
     }
 
     @Override
@@ -125,6 +130,7 @@ public class Movie implements Parcelable {
         dest.writeDouble(popularity);
         dest.writeLong(voteCount);
         dest.writeDouble(voteAverage);
+        dest.writeTypedList(movieVideos);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -265,6 +271,14 @@ public class Movie implements Parcelable {
 
     public void setVoteAverage(double voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    public ArrayList<MovieVideo> getMovieVideos() {
+        return movieVideos;
+    }
+
+    public void setMovieVideos(ArrayList<MovieVideo> movieVideos) {
+        this.movieVideos = movieVideos;
     }
 
     @Override

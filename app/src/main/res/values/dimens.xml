@@ -13,4 +13,7 @@
     <dimen name="spacing_genre">4dp</dimen>
 
     <dimen name="radius_corner">16dp</dimen>
+
+    <dimen name="video_thumbnail_width">100dp</dimen>
+    <dimen name="video_thumbnail_height">80dp</dimen>
 </resources>

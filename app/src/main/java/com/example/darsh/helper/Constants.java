@@ -19,4 +19,8 @@ public class Constants {
     public static final String SCROLL_POSITION = "scrollPosition";
 
     public static final String INTENT_EXTRA_MOVIE = "movie";
+
+    public static final String YOUTUBE = "youtube";
+    public static final String URI_YOUTUBE_APP = "vnd.youtube:";
+    public static final String URI_YOUTUBE_BROWSER = "http://www.youtube.com/watch?v=";
 }

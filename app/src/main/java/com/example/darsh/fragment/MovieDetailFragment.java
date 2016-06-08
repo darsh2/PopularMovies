@@ -1,7 +1,9 @@
 package com.example.darsh.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,10 +21,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.example.darsh.adapter.GenresListAdapter;
+import com.example.darsh.adapter.VideosListAdapter;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
+import com.example.darsh.model.MovieVideo;
+import com.example.darsh.model.MovieVideos;
 import com.example.darsh.network.TmdbRestClient;
 import com.example.darsh.popularmovies.R;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,19 +38,20 @@ import retrofit2.Response;
 /**
  * Created by darshan on 14/4/16.
  */
-public class MovieDetailFragment extends Fragment {
+public class MovieDetailFragment extends Fragment implements VideosListAdapter.OnVideoClickListener {
     private Movie movie;
 
     /*
     List of views whose references are required to be updated
     once the network fetches data about them. View references are
     obtained beforehand for a performance gain.
-    Movie duration, horizontally scrollable genres recyclerView,
+    Movie duration, horizontally scrollable genres genresRecyclerView,
     tag line text are updated after a successful api query.
      */
     private TextView duration;
     private TextView tagLine;
-    private RecyclerView recyclerView;
+    private RecyclerView genresRecyclerView;
+    private RecyclerView videosRecyclerView;
 
     /*
     Reference to the overview text is stored as absence of tag line
@@ -63,6 +71,7 @@ public class MovieDetailFragment extends Fragment {
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
             loadMovieDetails();
+            loadMovieVideos();
         }
     }
 
@@ -96,9 +105,9 @@ public class MovieDetailFragment extends Fragment {
          */
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new SpacingItemDecoration(
+        genresRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
+        genresRecyclerView.setLayoutManager(linearLayoutManager);
+        genresRecyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.spacing_genre)));
 
         duration = (TextView) view.findViewById(R.id.text_view_duration);
@@ -122,6 +131,11 @@ public class MovieDetailFragment extends Fragment {
                 .placeholder(R.drawable.image_placeholder)
                 .into(posterImage);
 
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        videosRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_videos_list);
+        videosRecyclerView.setLayoutManager(linearLayoutManager);
+        videosRecyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_genre)));
 
         return view;
     }
@@ -163,8 +177,8 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void run() {
                 GenresListAdapter adapter = new GenresListAdapter(movie.getGenres());
-                recyclerView.setAdapter(adapter);
-                recyclerView.setHasFixedSize(true);
+                genresRecyclerView.setAdapter(adapter);
+                genresRecyclerView.setHasFixedSize(true);
             }
         }, 500);
     }
@@ -189,6 +203,78 @@ public class MovieDetailFragment extends Fragment {
             return;
         }
         tagLine.setText(movie.getTagLine());
+    }
+
+    private void loadMovieVideos() {
+        Call<MovieVideos> call = TmdbRestClient.getInstance()
+                .getMovieVidoesImpl()
+                .getMovieVideos(movie.getId());
+        Callback<MovieVideos> callback = new Callback<MovieVideos>() {
+            @Override
+            public void onResponse(Call<MovieVideos> call, Response<MovieVideos> response) {
+                ArrayList<MovieVideo> videos;
+                if (response.isSuccessful()) {
+                    videos = response.body().getVideos();
+
+                } else {
+                    /*
+                    If response is unsuccessful, create a temporary
+                    MovieVideo object that has an invalid key and
+                    error as it's name. This is an easier way to
+                    inform user to avoiding switching between a TextView
+                    and RecyclerView. Still wondering of an efficient
+                    way to handle such cases.
+                     */
+                    MovieVideo temp = new MovieVideo();
+                    temp.setKey("");
+                    temp.setName(getString(R.string.error));
+
+                    videos = new ArrayList<>();
+                    videos.add(temp);
+                }
+
+                movie.setMovieVideos(videos);
+                setupMovieVideos();
+            }
+
+            @Override
+            public void onFailure(Call<MovieVideos> call, Throwable t) {
+                /*
+                Nothing is done here because other callbacks would also
+                fail. Overview text would intimate user about checking
+                if device is connected to the internet.
+                 */
+            }
+        };
+        call.enqueue(callback);
+    }
+
+    @Override
+    public void onVideoClick(MovieVideo movieVideo) {
+        if (!movieVideo.getSite().equalsIgnoreCase(Constants.YOUTUBE)) {
+            return;
+        }
+
+        Intent intent;
+        /*
+        Play video using YouTube app if it exists,
+        else default to browser.
+        Taken from: http://stackoverflow.com/a/12439378/3946664
+         */
+        try {
+            intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Constants.URI_YOUTUBE_APP + movieVideo.getKey()));
+        } catch (ActivityNotFoundException ex) {
+            intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
+        }
+        startActivity(intent);
+    }
+
+    private void setupMovieVideos() {
+        VideosListAdapter adapter = new VideosListAdapter(MovieDetailFragment.this, movie.getMovieVideos());
+        videosRecyclerView.setAdapter(adapter);
+        videosRecyclerView.setHasFixedSize(true);
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {
