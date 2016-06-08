@@ -8,7 +8,7 @@ Current features:
 * Movie detail additionally include list of genres (apart from requirements)
 * Support for orientation change
 
-Screencast can be found [here](https://youtu.be/Pym0W35S7Gc).
+Updated screencast can be found [here](https://youtu.be/-sCmRRbo8Y8).
 
 ## How to use
 Either clone this repository using git or download as zip (and unzip). In app/build.gradle file,
