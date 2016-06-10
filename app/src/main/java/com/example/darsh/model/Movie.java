@@ -78,6 +78,8 @@ public class Movie implements Parcelable {
 
     private ArrayList<MovieVideo> movieVideos = new ArrayList<>();
 
+    private ArrayList<MovieReview> movieReviews = new ArrayList<>();
+
     public Movie() {
     }
 
@@ -105,6 +107,10 @@ public class Movie implements Parcelable {
         if (movieVideos == null) {
             movieVideos = new ArrayList<>();
         }
+        source.readTypedList(this.movieReviews, MovieReview.CREATOR);
+        if (movieReviews == null) {
+            movieReviews = new ArrayList<>();
+        }
     }
 
     @Override
@@ -131,6 +137,7 @@ public class Movie implements Parcelable {
         dest.writeLong(voteCount);
         dest.writeDouble(voteAverage);
         dest.writeTypedList(movieVideos);
+        dest.writeTypedList(movieReviews);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -279,6 +286,14 @@ public class Movie implements Parcelable {
 
     public void setMovieVideos(ArrayList<MovieVideo> movieVideos) {
         this.movieVideos = movieVideos;
+    }
+
+    public ArrayList<MovieReview> getMovieReviews() {
+        return movieReviews;
+    }
+
+    public void setMovieReviews(ArrayList<MovieReview> movieReviews) {
+        this.movieReviews = movieReviews;
     }
 
     @Override

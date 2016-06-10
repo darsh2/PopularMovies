@@ -24,6 +24,8 @@ import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.adapter.VideosListAdapter;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
+import com.example.darsh.model.MovieReview;
+import com.example.darsh.model.MovieReviews;
 import com.example.darsh.model.MovieVideo;
 import com.example.darsh.model.MovieVideos;
 import com.example.darsh.network.TmdbRestClient;
@@ -49,17 +51,22 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     tag line text are updated after a successful api query.
      */
     private TextView duration;
-    private TextView tagLine;
+
     private RecyclerView genresRecyclerView;
-    private RecyclerView videosRecyclerView;
 
     /*
     Reference to the overview text is stored as absence of tag line
     would leave unused space below the list of movie genres.
     In such a scenario, remove margins of overview text.
      */
+    private TextView tagLine;
     private TextView overview;
 
+    private RecyclerView videosRecyclerView;
+
+    private TextView reviewAuthor;
+    private TextView reviewContent;
+    private TextView reviewReadAll;
 
     private final String BACKDROP_IMAGE_URL = "http://image.tmdb.org/t/p/w500";
     private final String POSTER_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
@@ -69,9 +76,14 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         if (intent != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
             loadMovieDetails();
             loadMovieVideos();
+            loadMovieReviews();
         }
     }
 
@@ -136,6 +148,10 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         videosRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_videos_list);
         videosRecyclerView.setLayoutManager(linearLayoutManager);
         videosRecyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_genre)));
+
+        reviewAuthor = (TextView) view.findViewById(R.id.text_view_review_author);
+        reviewContent = (TextView) view.findViewById(R.id.text_view_review_content);
+        reviewReadAll = (TextView) view.findViewById(R.id.text_view_review_read_all);
 
         return view;
     }
@@ -275,6 +291,74 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         VideosListAdapter adapter = new VideosListAdapter(MovieDetailFragment.this, movie.getMovieVideos());
         videosRecyclerView.setAdapter(adapter);
         videosRecyclerView.setHasFixedSize(true);
+    }
+
+    private void loadMovieReviews() {
+        Call<MovieReviews> call = TmdbRestClient.getInstance()
+                .getMovieReviewsImpl()
+                .getMovieReviews(movie.getId(), 1);
+        Callback<MovieReviews> callback = new Callback<MovieReviews>() {
+            @Override
+            public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
+                ArrayList<MovieReview> movieReviews = new ArrayList<>();
+                MovieReview review;
+                if (!response.isSuccessful()) {
+                    review = errorLoadingReviews(Constants.SERVER_ERROR);
+                } else if (response.body().getMovieReviews().size() == 0) {
+                    review = errorLoadingReviews(Constants.NONE);
+                } else {
+                    review = response.body().getMovieReviews().get(0);
+                }
+                movieReviews.add(review);
+                movie.setMovieReviews(movieReviews);
+                setupMovieReviews();
+            }
+
+            @Override
+            public void onFailure(Call<MovieReviews> call, Throwable t) {
+                ArrayList<MovieReview> movieReviews = new ArrayList<>();
+                movieReviews.add(errorLoadingReviews(Constants.NETWORK_ERROR));
+                movie.setMovieReviews(movieReviews);
+                setupMovieReviews();
+            }
+        };
+        call.enqueue(callback);
+    }
+
+    private MovieReview errorLoadingReviews(int flag) {
+        MovieReview review = new MovieReview();
+        review.setAuthor(getString(R.string.no_review));
+        switch (flag) {
+            case Constants.NONE: {
+                review.setContent(getString(R.string.no_reviews));
+                break;
+            }
+
+            case Constants.NETWORK_ERROR: {
+                review.setContent(getString(R.string.network_error_movie_detail));
+                break;
+            }
+
+            case Constants.SERVER_ERROR: {
+                review.setContent(getString(R.string.server_error));
+                break;
+            }
+        }
+        return review;
+    }
+
+    private void setupMovieReviews() {
+        reviewAuthor.setText(movie.getMovieReviews().get(0).getAuthor());
+        reviewContent.setText(movie.getMovieReviews().get(0).getContent());
+        /*
+        Hide read all reviews option if there
+        are no reviews for the movie.
+         */
+        if (reviewContent.getText().toString()
+                .compareTo(getString(R.string.no_reviews)) == 0) {
+            reviewReadAll.setVisibility(View.INVISIBLE);
+            reviewReadAll.setOnClickListener(null);
+        }
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {

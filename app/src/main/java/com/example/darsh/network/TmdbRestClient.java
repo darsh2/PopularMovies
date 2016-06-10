@@ -20,8 +20,10 @@ public class TmdbRestClient {
 
     private MoviesApi.PopularMovies popularMovies;
     private MoviesApi.TopRatedMovies topRatedMovies;
+
     private MoviesApi.MovieDetails movieDetails;
     private MoviesApi.MovieDetailVideos movieVidoes;
+    private MoviesApi.MovieDetailReviews movieReviews;
 
     private Retrofit retrofit;
 
@@ -64,6 +66,13 @@ public class TmdbRestClient {
             movieVidoes = retrofit.create(MoviesApi.MovieDetailVideos.class);
         }
         return movieVidoes;
+    }
+
+    public MoviesApi.MovieDetailReviews getMovieReviewsImpl() {
+        if (movieReviews == null) {
+            movieReviews = retrofit.create(MoviesApi.MovieDetailReviews.class);
+        }
+        return movieReviews;
     }
 
     private void initializeRetrofit() {

@@ -9,4 +9,9 @@
     <string name="server_error">Oops! Something is wrong at our end. Please try again later.</string>
     <string name="videos">Videos</string>
     <string name="error">Error</string>
+    <string name="reviews">Reviews</string>
+    <string name="read_all">READ ALL</string>
+    <string name="see_more">SEE MORE</string>
+    <string name="no_review">No Review</string>
+    <string name="no_reviews">Users are yet to review this movie.</string>
 </resources>

@@ -44,9 +44,15 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="?attr/actionBarSize"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+        <!--
+            NestedScrollView does not seem to obscure contents
+            of this layout. Probably because of the definitive
+            height given to the LinearLayout at the end of this
+            view. Replacing the same with wrap content does not
+            work.
+            android:paddingBottom="?attr/actionBarSize"
+        -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -109,6 +115,45 @@
                     android:layout_marginTop="4dp"/>
             </LinearLayout>
 
+            <include layout="@layout/view_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="@dimen/padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reviews"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/text_view_review_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:id="@+id/text_view_review_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:id="@+id/text_view_review_read_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="@string/read_all"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorAccent"/>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -14,6 +14,8 @@ public class Constants {
     public static final int NETWORK_ERROR = 1006;
     public static final int SERVER_ERROR = 1007;
 
+    public static final int NONE = 1008;
+
     public static final String MOVIES_LIST = "moviesList";
     public static final String NEXT_PAGE = "nextPage";
     public static final String SCROLL_POSITION = "scrollPosition";
