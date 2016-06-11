@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Padding is required in the linear layout.
+On scrolling in the recycler view, the views
+were not redrawn correctly leading to some text
+being clipped off or additional spacing between
+items. This is because the neither the layout
+nor it's child views have a definite height
+(it's set to wrap content). Adding a padding
+resolved this issue. Solution was obtained as
+similar issue was faced using NestedScrollView
+in MovieDetailFragment view.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/text_view_review_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/text_view_review_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"/>
+</LinearLayout>

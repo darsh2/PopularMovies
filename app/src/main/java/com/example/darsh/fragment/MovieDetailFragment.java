@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,7 +153,33 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         reviewAuthor = (TextView) view.findViewById(R.id.text_view_review_author);
         reviewContent = (TextView) view.findViewById(R.id.text_view_review_content);
         reviewReadAll = (TextView) view.findViewById(R.id.text_view_review_read_all);
+        reviewReadAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(MovieDetailFragment.class.getName(), "onClick");
+                /*
+                Use bundle as opposed to a non default constructor
+                to pass data to a fragment. This is because if at
+                some point Android decides to recreate the fragment,
+                it will call it's default no argument constructor.
+                Read more: http://stackoverflow.com/questions/9245408/best-practice-for-instantiating-a-new-android-fragment/9245510#9245510
+                 */
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.BUNDLE_ID, movie.getId());
+                bundle.putString(Constants.BUNDLE_TITLE, movie.getTitle());
+                bundle.putLong(Constants.BUNDLE_VOTE_COUNT, movie.getVoteCount());
+                bundle.putDouble(Constants.BUNDLE_VOTE_AVERAGE, movie.getVoteAverage());
 
+                MovieReviewsFragment movieReviewsFragment = new MovieReviewsFragment();
+                movieReviewsFragment.setArguments(bundle);
+
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container_movie_detail, movieReviewsFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         return view;
     }
 
