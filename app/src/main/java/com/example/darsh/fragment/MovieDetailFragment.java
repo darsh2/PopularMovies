@@ -76,20 +76,17 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
         if (intent != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
-            loadMovieDetails();
-            loadMovieVideos();
-            loadMovieReviews();
         }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            movie = savedInstanceState.getParcelable(Constants.BUNDLE_MOVIE);
+        }
+
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -181,6 +178,30 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        /*
+        On transitioning from this fragment to MovieReviewsFragment
+        and back, the fragment is recreated and onCreate is not
+        called. Hence load genres, trailers and reviews here.
+         */
+        loadMovieDetails();
+        loadMovieVideos();
+        loadMovieReviews();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /*
+        Save the current state of the fragment by saving
+        the Movie object to reduce the number of network
+        calls made to retrieve genres, trailers and reviews.
+         */
+        outState.putParcelable(Constants.BUNDLE_MOVIE, movie);
+    }
+
     private void loadMovieDetails() {
         if (movie.getTagLine() != null) {
             updateUI();
@@ -257,7 +278,6 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
             setupMovieVideos();
             return;
         }
-
 
         Call<MovieVideos> call = TmdbRestClient.getInstance()
                 .getMovieVidoesImpl()
@@ -336,7 +356,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
             setupMovieReviews();
             return;
         }
-        
+
         Call<MovieReviews> call = TmdbRestClient.getInstance()
                 .getMovieReviewsImpl()
                 .getMovieReviews(movie.getId(), 1);
