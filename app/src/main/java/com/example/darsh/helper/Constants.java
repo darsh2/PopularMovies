@@ -27,6 +27,7 @@ public class Constants {
     public static final String URI_YOUTUBE_APP = "vnd.youtube:";
     public static final String URI_YOUTUBE_BROWSER = "http://www.youtube.com/watch?v=";
 
+    public static final String BUNDLE_MOVIE = "movie";
     public static final String BUNDLE_ID = "id";
     public static final String BUNDLE_TITLE = "title";
     public static final String BUNDLE_VOTE_COUNT = "voteCount";

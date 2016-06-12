@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.darsh.adapter.MovieReviewsListAdapter;
@@ -67,9 +68,9 @@ public class MovieReviewsFragment extends Fragment {
         TextView ratingText = (TextView) view.findViewById(R.id.text_view_rating);
         ratingText.setText(String.format(Locale.getDefault(), "%.2f", voteAverage));
 
-        AppCompatRatingBar ratingBar = (AppCompatRatingBar) view.findViewById(R.id.rating_bar);
-        ratingBar.setStepSize(2.0f);
+        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_bar);
         ratingBar.setRating((float) voteAverage);
+        ratingBar.setMax(10);
 
         TextView voteCountText = (TextView) view.findViewById(R.id.text_view_view_count);
         voteCountText.setText(String.format(Locale.getDefault(), "%d", voteCount));

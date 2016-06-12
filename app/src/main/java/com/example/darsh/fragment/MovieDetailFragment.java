@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,7 +155,6 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         reviewReadAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(MovieDetailFragment.class.getName(), "onClick");
                 /*
                 Use bundle as opposed to a non default constructor
                 to pass data to a fragment. This is because if at
@@ -184,6 +182,11 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void loadMovieDetails() {
+        if (movie.getTagLine() != null) {
+            updateUI();
+            return;
+        }
+
         Call<Movie> call = TmdbRestClient.getInstance()
                 .getMovieDetailsImpl()
                 .getMovieDetails(movie.getId());
@@ -249,6 +252,13 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void loadMovieVideos() {
+        if (movie.getMovieVideos() != null &&
+                movie.getMovieVideos().size() > 0) {
+            setupMovieVideos();
+            return;
+        }
+
+
         Call<MovieVideos> call = TmdbRestClient.getInstance()
                 .getMovieVidoesImpl()
                 .getMovieVideos(movie.getId());
@@ -321,6 +331,12 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void loadMovieReviews() {
+        if (movie.getMovieReviews() != null &&
+                movie.getMovieReviews().size() > 0) {
+            setupMovieReviews();
+            return;
+        }
+        
         Call<MovieReviews> call = TmdbRestClient.getInstance()
                 .getMovieReviewsImpl()
                 .getMovieReviews(movie.getId(), 1);
@@ -375,6 +391,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void setupMovieReviews() {
+
         reviewAuthor.setText(movie.getMovieReviews().get(0).getAuthor());
         reviewContent.setText(movie.getMovieReviews().get(0).getContent());
         /*
