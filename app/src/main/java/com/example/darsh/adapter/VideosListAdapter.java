@@ -27,10 +27,14 @@ public class VideosListAdapter extends RecyclerView.Adapter<VideosListAdapter.Vi
 
     private final String YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/%s/0.jpg";
 
-    public VideosListAdapter(Fragment fragment, ArrayList<MovieVideo> videos) {
-        this.videos = videos;
+    public VideosListAdapter(Fragment fragment) {
         this.listener = (OnVideoClickListener) fragment;
         this.context = fragment.getContext();
+        this.videos = new ArrayList<>();
+    }
+
+    public void setVideos(ArrayList<MovieVideo> videos) {
+        this.videos.addAll(videos);
     }
 
     @Override

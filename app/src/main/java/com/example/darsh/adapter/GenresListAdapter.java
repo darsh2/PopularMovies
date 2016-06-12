@@ -16,8 +16,12 @@ import java.util.ArrayList;
 public class GenresListAdapter extends RecyclerView.Adapter<GenresListAdapter.ViewHolder> {
     private ArrayList<Genre> genres;
 
-    public GenresListAdapter(ArrayList<Genre> genres) {
-        this.genres = genres;
+    public GenresListAdapter() {
+        this.genres = new ArrayList<>();
+    }
+
+    public void setGenres(ArrayList<Genre> genres) {
+        this.genres.addAll(genres);
     }
 
     @Override

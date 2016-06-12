@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,6 +51,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
      */
     private TextView duration;
 
+    private GenresListAdapter genresListAdapter;
     private RecyclerView genresRecyclerView;
 
     /*
@@ -62,6 +62,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     private TextView tagLine;
     private TextView overview;
 
+    private VideosListAdapter videosListAdapter;
     private RecyclerView videosRecyclerView;
 
     private TextView reviewAuthor;
@@ -105,8 +106,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         String voteAverage = Double.toString(movie.getVoteAverage());
         rating.setText(voteAverage);
 
-        overview = (TextView) view.findViewById(R.id.text_view_overview);
-        overview.setText(movie.getOverview());
+        duration = (TextView) view.findViewById(R.id.text_view_duration);
 
         /*
         Initialise layout of genres RecyclerView beforehand.
@@ -114,12 +114,15 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
          */
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        genresListAdapter = new GenresListAdapter();
         genresRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
         genresRecyclerView.setLayoutManager(linearLayoutManager);
+        genresRecyclerView.setAdapter(genresListAdapter);
         genresRecyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.spacing_genre)));
 
-        duration = (TextView) view.findViewById(R.id.text_view_duration);
+        overview = (TextView) view.findViewById(R.id.text_view_overview);
+        overview.setText(movie.getOverview());
         tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
 
         /*
@@ -142,8 +145,10 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        videosListAdapter = new VideosListAdapter(MovieDetailFragment.this);
         videosRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_videos_list);
         videosRecyclerView.setLayoutManager(linearLayoutManager);
+        videosRecyclerView.setAdapter(videosListAdapter);
         videosRecyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_genre)));
 
         reviewAuthor = (TextView) view.findViewById(R.id.text_view_review_author);
@@ -240,14 +245,9 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void setupGenresList() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                GenresListAdapter adapter = new GenresListAdapter(movie.getGenres());
-                genresRecyclerView.setAdapter(adapter);
-                genresRecyclerView.setHasFixedSize(true);
-            }
-        }, 500);
+        genresListAdapter.setGenres(movie.getGenres());
+        genresListAdapter.notifyDataSetChanged();
+        genresRecyclerView.setHasFixedSize(true);
     }
 
     private void setupAboutMovieView() {
@@ -345,8 +345,8 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void setupMovieVideos() {
-        VideosListAdapter adapter = new VideosListAdapter(MovieDetailFragment.this, movie.getMovieVideos());
-        videosRecyclerView.setAdapter(adapter);
+        videosListAdapter.setVideos(movie.getMovieVideos());
+        videosListAdapter.notifyDataSetChanged();
         videosRecyclerView.setHasFixedSize(true);
     }
 
@@ -411,7 +411,6 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void setupMovieReviews() {
-
         reviewAuthor.setText(movie.getMovieReviews().get(0).getAuthor());
         reviewContent.setText(movie.getMovieReviews().get(0).getContent());
         /*
