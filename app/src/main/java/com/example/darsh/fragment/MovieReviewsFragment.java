@@ -2,16 +2,15 @@ package com.example.darsh.fragment;
 
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.darsh.adapter.MovieReviewsListAdapter;
@@ -40,6 +39,7 @@ public class MovieReviewsFragment extends Fragment {
 
     private MovieReviewsListAdapter adapter;
     private ArrayList<MovieReview> movieReviews;
+    private RecyclerView recyclerView;
 
     public MovieReviewsFragment() {}
 
@@ -53,7 +53,6 @@ public class MovieReviewsFragment extends Fragment {
             voteCount = bundle.getLong(Constants.BUNDLE_VOTE_COUNT, 0);
             voteAverage = bundle.getDouble(Constants.BUNDLE_VOTE_AVERAGE, 0);
         }
-        loadMovieReviews();
     }
 
     @Nullable
@@ -66,25 +65,44 @@ public class MovieReviewsFragment extends Fragment {
         TextView ratingText = (TextView) view.findViewById(R.id.text_view_rating);
         ratingText.setText(String.format(Locale.getDefault(), "%.2f", voteAverage));
 
-        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.rating_bar);
+        AppCompatRatingBar ratingBar = (AppCompatRatingBar) view.findViewById(R.id.rating_bar);
         ratingBar.setRating((float) voteAverage);
-        ratingBar.setMax(10);
 
         TextView voteCountText = (TextView) view.findViewById(R.id.text_view_view_count);
         voteCountText.setText(String.format(Locale.getDefault(), "%d", voteCount));
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_reviews_list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_reviews_list);
+        setupRecyclerView();
 
+        if (savedInstanceState != null) {
+            ArrayList<MovieReview> temp = savedInstanceState.getParcelableArrayList(Constants.BUNDLE_REVIEWS);
+            if (temp != null) {
+                movieReviews.addAll(temp);
+                adapter.notifyDataSetChanged();
+            }
+        } else {
+            loadMovieReviews();
+        }
+
+        return view;
+    }
+
+    private void setupRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        adapter = new MovieReviewsListAdapter(getContext());
+        movieReviews = new ArrayList<>();
+        adapter = new MovieReviewsListAdapter(getContext(), movieReviews);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_medium)));
+    }
 
-        return view;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(Constants.BUNDLE_REVIEWS, movieReviews);
     }
 
     private void loadMovieReviews() {
@@ -103,7 +121,8 @@ public class MovieReviewsFragment extends Fragment {
                     temp = StateHandler.handleMovieReviewState(getContext(), Constants.NONE);
 
                 } else {
-                    movieReviews = response.body().getMovieReviews();
+                    movieReviews.clear();
+                    movieReviews.addAll(response.body().getMovieReviews());
                 }
                 update();
             }
@@ -116,24 +135,14 @@ public class MovieReviewsFragment extends Fragment {
 
             private void update() {
                 if (temp != null) {
-                    movieReviews = new ArrayList<>();
+                    movieReviews.clear();
                     movieReviews.add(temp);
-                    temp = null;
                 }
-                setupMovieReviewsView();
+                temp = null;
+                adapter.notifyDataSetChanged();
             }
         };
         call.enqueue(callback);
-    }
-
-    private void setupMovieReviewsView() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adapter.setMovieReviews(movieReviews);
-                adapter.notifyDataSetChanged();
-            }
-        }, 500);
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {

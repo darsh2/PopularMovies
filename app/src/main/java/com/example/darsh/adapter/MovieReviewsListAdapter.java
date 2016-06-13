@@ -19,13 +19,9 @@ public class MovieReviewsListAdapter extends RecyclerView.Adapter<MovieReviewsLi
     private Context context;
     private ArrayList<MovieReview> movieReviews;
 
-    public MovieReviewsListAdapter(Context context) {
+    public MovieReviewsListAdapter(Context context, ArrayList<MovieReview> movieReviews) {
         this.context = context;
-        this.movieReviews = new ArrayList<>();
-    }
-
-    public void setMovieReviews(ArrayList<MovieReview> movieReviews) {
-        this.movieReviews.addAll(movieReviews);
+        this.movieReviews = movieReviews;
     }
 
     @Override

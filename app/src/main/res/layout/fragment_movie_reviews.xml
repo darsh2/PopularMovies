@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -35,13 +34,15 @@
             android:layout_margin="@dimen/spacing_medium"
             android:orientation="vertical">
 
-            <RatingBar
+            <android.support.v7.widget.AppCompatRatingBar
                 android:id="@+id/rating_bar"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:numStars="5"
+                android:max="10"
                 android:isIndicator="true"
-                android:stepSize="0.5"/>
+                android:stepSize="0.1"/>
 
             <TextView
                 android:id="@+id/text_view_view_count"
@@ -58,7 +59,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding"
+        android:padding="@dimen/padding"
         android:text="@string/reviews"
         android:textSize="25sp"/>
 
@@ -66,8 +67,8 @@
         android:id="@+id/recycler_view_reviews_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding"
-        android:layout_marginStart="@dimen/padding"
-        android:layout_marginRight="@dimen/padding"
-        android:layout_marginEnd="@dimen/padding"/>
+        android:paddingLeft="@dimen/padding"
+        android:paddingStart="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:paddingEnd="@dimen/padding"/>
 </LinearLayout>

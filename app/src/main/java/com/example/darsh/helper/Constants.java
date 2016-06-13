@@ -21,7 +21,6 @@ public class Constants {
     public static final String SCROLL_POSITION = "scrollPosition";
 
     public static final String INTENT_EXTRA_MOVIE = "movie";
-    public static final String INTENT_EXTRA_MOVIE_REVIEW = "movieReview";
 
     public static final String YOUTUBE = "youtube";
     public static final String URI_YOUTUBE_APP = "vnd.youtube:";
@@ -32,4 +31,5 @@ public class Constants {
     public static final String BUNDLE_TITLE = "title";
     public static final String BUNDLE_VOTE_COUNT = "voteCount";
     public static final String BUNDLE_VOTE_AVERAGE = "voteAverage";
+    public static final String BUNDLE_REVIEWS = "reviews";
 }
