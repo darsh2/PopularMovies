@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.adapter.VideosListAdapter;
 import com.example.darsh.helper.Constants;
+import com.example.darsh.helper.StateHandler;
 import com.example.darsh.model.Movie;
 import com.example.darsh.model.MovieReview;
 import com.example.darsh.model.MovieReviews;
@@ -202,7 +204,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         /*
         Save the current state of the fragment by saving
         the Movie object to reduce the number of network
-        calls made to retrieve genres, trailers and reviews.
+        calls.
          */
         outState.putParcelable(Constants.BUNDLE_MOVIE, movie);
     }
@@ -220,19 +222,31 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 if (!response.isSuccessful()) {
-                    movie.setTagLine(getString(R.string.server_error));
+                    movie.setTagLine(StateHandler.handleMovieDetailState(getContext(), Constants.SERVER_ERROR));
 
                 } else {
                     movie.setGenres(response.body().getGenres());
                     movie.setDuration(response.body().getDuration());
                     movie.setTagLine(response.body().getTagLine());
                 }
-                updateUI();
+                update();
             }
 
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
-                movie.setTagLine(getString(R.string.network_error_movie_detail));
+                movie.setTagLine(StateHandler.handleMovieDetailState(getContext(), Constants.NETWORK_ERROR));
+                update();
+            }
+
+            /*
+            Seemingly redundant to have this method which just
+            passes on call to updateUI. However can allow for
+            greater customization depending on whether it is
+            called from onResponse or onFailure. Future scope
+            to possibly modify UI. Check loadMovieVideos() and
+            loadMovieReviews() for use case of this style.
+             */
+            private void update() {
                 updateUI();
             }
         };
@@ -283,40 +297,37 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                 .getMovieVidoesImpl()
                 .getMovieVideos(movie.getId());
         Callback<MovieVideos> callback = new Callback<MovieVideos>() {
+            private MovieVideo video;
+
             @Override
             public void onResponse(Call<MovieVideos> call, Response<MovieVideos> response) {
-                ArrayList<MovieVideo> videos;
-                if (response.isSuccessful()) {
-                    videos = response.body().getVideos();
+                if (!response.isSuccessful()) {
+                    video = StateHandler.handleMovieVideoState(getContext(), Constants.SERVER_ERROR);
+
+                } else if (response.body().getVideos().size() == 0) {
+                    video = StateHandler.handleMovieVideoState(getContext(), Constants.NONE);
 
                 } else {
-                    /*
-                    If response is unsuccessful, create a temporary
-                    MovieVideo object that has an invalid key and
-                    error as it's name. This is an easier way to
-                    inform user to avoiding switching between a TextView
-                    and RecyclerView. Still wondering of an efficient
-                    way to handle such cases.
-                     */
-                    MovieVideo temp = new MovieVideo();
-                    temp.setKey("");
-                    temp.setName(getString(R.string.error));
-
-                    videos = new ArrayList<>();
-                    videos.add(temp);
+                    movie.setMovieVideos(response.body().getVideos());
                 }
-
-                movie.setMovieVideos(videos);
-                setupMovieVideos();
+                update();
             }
 
             @Override
             public void onFailure(Call<MovieVideos> call, Throwable t) {
-                /*
-                Nothing is done here because other callbacks would also
-                fail. Overview text would intimate user about checking
-                if device is connected to the internet.
-                 */
+                video = StateHandler.handleMovieVideoState(getContext(), Constants.NETWORK_ERROR);
+                update();
+            }
+
+            private void update() {
+                if (video != null) {
+                    ArrayList<MovieVideo> videos = new ArrayList<>();
+                    videos.add(video);
+                    video = null;
+
+                    movie.setMovieVideos(videos);
+                }
+                setupMovieVideos();
             }
         };
         call.enqueue(callback);
@@ -324,6 +335,11 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
 
     @Override
     public void onVideoClick(MovieVideo movieVideo) {
+        /*
+        Yet to check url to load for sites other than
+        YouTube given video key. Currently supports
+        only YouTube videos.
+         */
         if (!movieVideo.getSite().equalsIgnoreCase(Constants.YOUTUBE)) {
             return;
         }
@@ -361,53 +377,38 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                 .getMovieReviewsImpl()
                 .getMovieReviews(movie.getId(), 1);
         Callback<MovieReviews> callback = new Callback<MovieReviews>() {
+            private MovieReview review;
+
             @Override
             public void onResponse(Call<MovieReviews> call, Response<MovieReviews> response) {
-                ArrayList<MovieReview> movieReviews = new ArrayList<>();
-                MovieReview review;
                 if (!response.isSuccessful()) {
-                    review = errorLoadingReviews(Constants.SERVER_ERROR);
+                    review = StateHandler.handleMovieReviewState(getContext(), Constants.SERVER_ERROR);
+
                 } else if (response.body().getMovieReviews().size() == 0) {
-                    review = errorLoadingReviews(Constants.NONE);
+                    review = StateHandler.handleMovieReviewState(getContext(), Constants.NONE);
+
                 } else {
                     review = response.body().getMovieReviews().get(0);
                 }
-                movieReviews.add(review);
-                movie.setMovieReviews(movieReviews);
-                setupMovieReviews();
+                update();
             }
 
             @Override
             public void onFailure(Call<MovieReviews> call, Throwable t) {
+                review = StateHandler.handleMovieReviewState(getContext(), Constants.NETWORK_ERROR);
+                update();
+            }
+
+            private void update() {
                 ArrayList<MovieReview> movieReviews = new ArrayList<>();
-                movieReviews.add(errorLoadingReviews(Constants.NETWORK_ERROR));
+                movieReviews.add(review);
+                review = null;
+
                 movie.setMovieReviews(movieReviews);
                 setupMovieReviews();
             }
         };
         call.enqueue(callback);
-    }
-
-    private MovieReview errorLoadingReviews(int flag) {
-        MovieReview review = new MovieReview();
-        review.setAuthor(getString(R.string.no_review));
-        switch (flag) {
-            case Constants.NONE: {
-                review.setContent(getString(R.string.no_reviews));
-                break;
-            }
-
-            case Constants.NETWORK_ERROR: {
-                review.setContent(getString(R.string.network_error_movie_detail));
-                break;
-            }
-
-            case Constants.SERVER_ERROR: {
-                review.setContent(getString(R.string.server_error));
-                break;
-            }
-        }
-        return review;
     }
 
     private void setupMovieReviews() {

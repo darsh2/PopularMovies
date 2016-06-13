@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +103,6 @@ public class MovieReviewsFragment extends Fragment {
                     temp = StateHandler.handleMovieReviewState(getContext(), Constants.NONE);
 
                 } else {
-                    Log.i(MovieReviewsFragment.class.getName(), "Has reviews");
                     movieReviews = response.body().getMovieReviews();
                 }
                 update();
