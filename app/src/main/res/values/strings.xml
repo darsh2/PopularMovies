@@ -22,4 +22,6 @@
     <string name="reviews">Reviews</string>
     <string name="no_review">No Review</string>
     <string name="no_reviews">Users are yet to review this movie.</string>
+
+    <string name="authority">com.example.darsh</string>
 </resources>
