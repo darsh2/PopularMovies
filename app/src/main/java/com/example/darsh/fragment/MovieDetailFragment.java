@@ -1,11 +1,15 @@
 package com.example.darsh.fragment;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +20,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.adapter.VideosListAdapter;
+import com.example.darsh.database.MovieContract;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.helper.StateHandler;
 import com.example.darsh.model.Movie;
@@ -42,6 +48,9 @@ import retrofit2.Response;
  */
 public class MovieDetailFragment extends Fragment implements VideosListAdapter.OnVideoClickListener {
     private Movie movie;
+
+    private boolean isFavorite;
+    private FloatingActionButton favoriteButton;
 
     /*
     List of views whose references are required to be updated
@@ -93,6 +102,15 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(movie.getTitle());
+
+        favoriteButton = (FloatingActionButton) view.findViewById(R.id.button_favorite);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new FavoriteTogglerTask().execute();
+            }
+        });
+        new FavoriteCheckerTask().execute();
 
         /*
         Setting up movie detail view
@@ -439,5 +457,83 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
             }
             outRect.left = spacing;
         }
+    }
+
+    private class FavoriteCheckerTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Cursor cursor = getContext().getContentResolver()
+                    .query(
+                            MovieContract.MovieEntry.CONTENT_URI,
+                            new String[]{MovieContract.MovieColumns.MOVIE_ID },
+                            MovieContract.MovieColumns.MOVIE_ID + " = ?",
+                            new String[]{ String.valueOf(movie.getId()) },
+                            null
+                    );
+            return cursor != null && cursor.getCount() == 1;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isExists) {
+            super.onPostExecute(isExists);
+            if (isExists) {
+                favoriteButton.setImageResource(R.drawable.ic_star_white_24dp);
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_star_border_white_24dp);
+            }
+            isFavorite = isExists;
+        }
+    }
+
+    private class FavoriteTogglerTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean isSuccessful;
+            if (isFavorite) {
+                isSuccessful = getContext().getContentResolver()
+                        .delete(
+                                MovieContract.MovieEntry.CONTENT_URI,
+                                MovieContract.MovieColumns.MOVIE_ID + " = ?",
+                                new String[]{ String.valueOf(movie.getId()) }
+                        ) == 1;
+            } else {
+                isSuccessful = getContext().getContentResolver()
+                        .insert(MovieContract.MovieEntry.CONTENT_URI, getContentValues()) != null;
+            }
+            return isSuccessful;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isSuccessful) {
+            super.onPostExecute(isSuccessful);
+            if (!isSuccessful) {
+                showToast("Operation failed");
+                return;
+            }
+            isFavorite = !isFavorite;
+            if (isFavorite) {
+                favoriteButton.setImageResource(R.drawable.ic_star_white_24dp);
+                showToast("Movie successfully added to favorites");
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_star_border_white_24dp);
+                showToast("Movie successfully removed from favorites");
+            }
+        }
+
+        private ContentValues getContentValues() {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.MovieColumns.MOVIE_ID, movie.getId());
+            values.put(MovieContract.MovieColumns.MOVIE_TITLE, movie.getTitle());
+            values.put(MovieContract.MovieColumns.MOVIE_RELEASE_DATE, movie.getReleaseDate());
+            values.put(MovieContract.MovieColumns.MOVIE_DURATION, movie.getDuration());
+            values.put(MovieContract.MovieColumns.MOVIE_RATING, movie.getVoteAverage());
+            values.put(MovieContract.MovieColumns.MOVIE_POSTER_PATH, movie.getPosterPath());
+            values.put(MovieContract.MovieColumns.MOVIE_BACKDROP_PATH, movie.getBackdropPath());
+            return values;
+        }
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 }
