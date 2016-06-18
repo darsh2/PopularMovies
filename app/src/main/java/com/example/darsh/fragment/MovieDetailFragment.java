@@ -470,7 +470,11 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                             new String[]{ String.valueOf(movie.getId()) },
                             null
                     );
-            return cursor != null && cursor.getCount() == 1;
+            boolean isExists = cursor != null && cursor.getCount() == 1;
+            if (cursor != null) {
+                cursor.close();
+            }
+            return isExists;
         }
 
         @Override
