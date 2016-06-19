@@ -125,7 +125,7 @@ public class EndlessScrollRecyclerView extends RecyclerView {
         previousTotal = getLayoutManager().getItemCount();
     }
 
-    public void error(int code) {
+    public void setState(int code) {
         if (footerViews == null || footerViews.size() == 0) {
             return;
         }

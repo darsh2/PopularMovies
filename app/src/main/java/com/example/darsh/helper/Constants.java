@@ -15,6 +15,7 @@ public class Constants {
     public static final int SERVER_ERROR = 1007;
 
     public static final int NONE = 1008;
+    public static final int CURSOR_ERROR = 1009;
 
     public static final String MOVIES_LIST = "moviesList";
     public static final String NEXT_PAGE = "nextPage";

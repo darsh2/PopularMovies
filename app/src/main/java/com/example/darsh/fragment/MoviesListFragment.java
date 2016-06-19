@@ -176,11 +176,20 @@ public class MoviesListFragment extends Fragment {
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
         }
-        recyclerView.error(code);
+        recyclerView.setState(code);
     }
 
     protected void addMovies(List<Movie> movies) {
         this.movies.addAll(movies);
+    }
+
+    protected void updateMovies(List<Movie> movies) {
+        this.movies.clear();
+        this.movies.addAll(movies);
+
+        progressBar.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
     }
 
     protected int getNumMovies() {
@@ -226,5 +235,9 @@ public class MoviesListFragment extends Fragment {
                 outRect.left = spacing;
             }
         }
+    }
+
+    protected void fragmentOnStart() {
+        super.onStart();
     }
 }

@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
+import com.example.darsh.fragment.FavoriteMoviesFragment;
 import com.example.darsh.fragment.PopularMoviesFragment;
 import com.example.darsh.fragment.TopRatedMoviesFragment;
 import com.example.darsh.helper.Constants;
@@ -54,6 +55,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
          */
         adapter.addFragment(new PopularMoviesFragment(), getString(R.string.popular));
         adapter.addFragment(new TopRatedMoviesFragment(), getString(R.string.top_rated));
+        adapter.addFragment(new FavoriteMoviesFragment(), "Favorites");
         viewPager.setAdapter(adapter);
     }
 
