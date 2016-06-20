@@ -83,6 +83,17 @@ public class Movie implements Parcelable {
     public Movie() {
     }
 
+    public Movie(int id, String title, String releaseDate, int duration, double voteAverage,
+                 String posterPath, String backdropPath) {
+        setId(id);
+        setTitle(title);
+        setReleaseDate(releaseDate);
+        setDuration(duration);
+        setVoteAverage(voteAverage);
+        setPosterPath(posterPath);
+        setBackdropPath(backdropPath);
+    }
+
     private Movie(Parcel source) {
         this.id = source.readInt();
         source.readTypedList(this.genres, Genre.CREATOR);

@@ -94,6 +94,23 @@ public class FooterView extends LinearLayout {
                 setVisibility(VISIBLE);
                 break;
             }
+
+            case Constants.LOADING_FAVORITES: {
+                setVisibility(INVISIBLE);
+                break;
+            }
+
+            case Constants.NONE: {
+                textView.setText(getContext().getString(R.string.no_favorites));
+                setVisibility(VISIBLE);
+                break;
+            }
+
+            case Constants.CURSOR_ERROR: {
+                textView.setText(getContext().getString(R.string.cursor_error));
+                setVisibility(VISIBLE);
+                break;
+            }
         }
     }
 }

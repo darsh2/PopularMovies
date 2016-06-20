@@ -55,7 +55,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
          */
         adapter.addFragment(new PopularMoviesFragment(), getString(R.string.popular));
         adapter.addFragment(new TopRatedMoviesFragment(), getString(R.string.top_rated));
-        adapter.addFragment(new FavoriteMoviesFragment(), "Favorites");
+        adapter.addFragment(new FavoriteMoviesFragment(), getString(R.string.favorites));
         viewPager.setAdapter(adapter);
     }
 

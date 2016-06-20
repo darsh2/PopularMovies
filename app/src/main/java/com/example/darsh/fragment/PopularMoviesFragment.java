@@ -28,10 +28,7 @@ public class PopularMoviesFragment extends MoviesListFragment {
                     retrievalError(Constants.SERVER_ERROR);
                     return;
                 }
-                int numMovies = getNumMovies();
-                int numMoviesDownloaded = response.body().getMovies().size();
                 addMovies(response.body().getMovies());
-                updateList(numMovies, numMoviesDownloaded);
             }
 
             @Override

@@ -3,6 +3,7 @@
 
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="favorites">Favorites</string>
 
     <string name="loading">Loading&#8230;</string>
 
@@ -24,4 +25,6 @@
     <string name="no_reviews">Users are yet to review this movie.</string>
 
     <string name="authority">com.example.darsh</string>
+    <string name="no_favorites">No movies have been added to favorites.</string>
+    <string name="cursor_error">Error loading favorites. Please try again later.</string>
 </resources>

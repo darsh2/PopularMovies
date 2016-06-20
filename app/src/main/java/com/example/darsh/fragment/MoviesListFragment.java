@@ -1,18 +1,23 @@
 package com.example.darsh.fragment;
 
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.darsh.adapter.MoviesListAdapter;
+import com.example.darsh.database.MovieContract;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 import com.example.darsh.popularmovies.R;
@@ -34,6 +39,10 @@ public class MoviesListFragment extends Fragment {
     private int page;
     private int position;
 
+    private boolean isFavoritesFragment;
+    private Handler handler;
+    private ContentObserver contentObserver;
+
     public MoviesListFragment() {}
 
     @Override
@@ -48,6 +57,16 @@ public class MoviesListFragment extends Fragment {
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
             position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
         }
+
+        /*
+        Determine the sub class type. If it is
+        an instance of FavoriteMoviesFragment,
+        set isFavoritesFragment to true.
+         */
+        Class<?> c = getClass();
+        if (c.getName().endsWith("FavoriteMoviesFragment")) {
+            isFavoritesFragment = true;
+        }
     }
 
     @Nullable
@@ -61,6 +80,11 @@ public class MoviesListFragment extends Fragment {
         recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
         setUpRecyclerView();
 
+        if (isFavoritesFragment) {
+            registerObserver();
+            loadMovies();
+        }
+
         return view;
     }
 
@@ -70,21 +94,23 @@ public class MoviesListFragment extends Fragment {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.spacing_movie)));
-        recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
-            @Override
-            public void onLoadMore() {
-                /*
-                If child count is 1, only the footerView is
-                shown. This implies that the first page is
-                yet to load. Hence increment page number
-                only if number of children is greater than 1.
-                 */
-                if (recyclerView.getChildCount() > 1) {
-                    page++;
+        if (!isFavoritesFragment) {
+            recyclerView.setLoadingListener(new EndlessScrollRecyclerView.LoadingListener() {
+                @Override
+                public void onLoadMore() {
+                    /*
+                    If child count is 1, only the footerView is
+                    shown. This implies that the first page is
+                    yet to load. Hence increment page number
+                    only if number of children is greater than 1.
+                     */
+                    if (recyclerView.getChildCount() > 1) {
+                        page++;
+                    }
+                    loadMovies();
                 }
-                loadMovies();
-            }
-        });
+            });
+        }
 
         /*
         If movies is null, then this is the first
@@ -116,6 +142,33 @@ public class MoviesListFragment extends Fragment {
         return spanCount;
     }
 
+    /**
+     * Register a {@link ContentObserver} to listen for changes
+     * in {@link MovieContract#BASE_CONTENT_URI}. On addition or
+     * deletion of a movie from favorites, {@link #loadMovies()}
+     * will be called to update movies list. This method is called
+     * from {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
+     * only if it is an instance of {@link FavoriteMoviesFragment}.
+     */
+    private void registerObserver() {
+        handler = new Handler();
+        contentObserver = new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange) {
+                Log.i(MoviesListFragment.class.getName(), "onChange(selfChange)");
+                loadMovies();
+            }
+
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                Log.i(MoviesListFragment.class.getName(), "onChange(selfChange, uri)");
+                onChange(selfChange);
+            }
+        };
+        getContext().getContentResolver()
+                .registerContentObserver(MovieContract.BASE_CONTENT_URI, true, contentObserver);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -123,10 +176,11 @@ public class MoviesListFragment extends Fragment {
         If movies list is of size zero, movies have to be
         fetched from tmdb. Hence display progress bar.
          */
-        if (movies.size() == 0) {
+        if (movies.size() == 0 && !isFavoritesFragment) {
             progressBar.setVisibility(View.VISIBLE);
             loadMovies();
-        } else {
+
+        } else if (position != RecyclerView.NO_POSITION) {
             recyclerView.scrollToPosition(position);
         }
     }
@@ -141,6 +195,28 @@ public class MoviesListFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (isFavoritesFragment) {
+            unregisterObserver();
+        }
+    }
+
+    /**
+     * Unregister the {@link ContentObserver} previously
+     * registered by {@link #registerObserver()}. Free
+     * up resources. This method is called from
+     * {@link #onDestroyView()} only if it is an instance
+     * of {@link FavoriteMoviesFragment}.
+     */
+    private void unregisterObserver() {
+        getContext().getContentResolver()
+                .unregisterContentObserver(contentObserver);
+        contentObserver = null;
+        handler = null;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
@@ -149,10 +225,23 @@ public class MoviesListFragment extends Fragment {
     }
 
     protected void loadMovies() {
-        recyclerView.setIsLoading(true);
+        if (!isFavoritesFragment) {
+            recyclerView.setIsLoading(true);
+
+        } else {
+            recyclerView.setState(Constants.LOADING_FAVORITES);
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
-    protected void updateList(int numMovies, int numMoviesDownloaded) {
+    protected void addMovies(List<Movie> movies) {
+        int numMovies = this.movies.size();
+        int numMoviesDownloaded = movies.size();
+        this.movies.addAll(movies);
+        updateList(numMovies, numMoviesDownloaded);
+    }
+
+    private void updateList(int numMovies, int numMoviesDownloaded) {
         recyclerView.setIsLoading(false);
 
         /*
@@ -179,21 +268,21 @@ public class MoviesListFragment extends Fragment {
         recyclerView.setState(code);
     }
 
-    protected void addMovies(List<Movie> movies) {
-        this.movies.addAll(movies);
-    }
-
-    protected void updateMovies(List<Movie> movies) {
+    protected void addFavoriteMovies(List<Movie> movies) {
         this.movies.clear();
+        if (movies == null) {
+            recyclerView.setState(Constants.CURSOR_ERROR);
+            return;
+        }
+
         this.movies.addAll(movies);
-
-        progressBar.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
-    }
-
-    protected int getNumMovies() {
-        return movies.size();
+        progressBar.setVisibility(View.INVISIBLE);
+        if (movies.size() == 0) {
+            recyclerView.setState(Constants.NONE);
+        } else {
+            recyclerView.setState(Constants.DONE);
+        }
     }
 
     protected int getPage() {
@@ -235,9 +324,5 @@ public class MoviesListFragment extends Fragment {
                 outRect.left = spacing;
             }
         }
-    }
-
-    protected void fragmentOnStart() {
-        super.onStart();
     }
 }
