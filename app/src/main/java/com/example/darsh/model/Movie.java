@@ -92,6 +92,11 @@ public class Movie implements Parcelable {
         setVoteAverage(voteAverage);
         setPosterPath(posterPath);
         setBackdropPath(backdropPath);
+        /*
+        Overview text is not persisted in database. Set it to an
+        empty string.
+         */
+        setOverview("");
     }
 
     private Movie(Parcel source) {

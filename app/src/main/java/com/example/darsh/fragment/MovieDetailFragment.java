@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +60,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     tag line text are updated after a successful api query.
      */
     private TextView duration;
+    private TextView rating;
 
     private GenresListAdapter genresListAdapter;
     private RecyclerView genresRecyclerView;
@@ -122,7 +122,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         TextView releaseDate = (TextView) view.findViewById(R.id.text_view_release_date);
         releaseDate.setText(movie.getReleaseDate());
 
-        TextView rating = (TextView) view.findViewById(R.id.text_view_rating);
+        rating = (TextView) view.findViewById(R.id.text_view_rating);
         String voteAverage = Double.toString(movie.getVoteAverage());
         rating.setText(voteAverage);
 
@@ -246,6 +246,17 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                     movie.setGenres(response.body().getGenres());
                     movie.setDuration(response.body().getDuration());
                     movie.setTagLine(response.body().getTagLine());
+                    /*
+                    If movie is loaded from Favorites, it's overview
+                    text is an empty string. Hence reset overview text.
+                     */
+                    movie.setOverview(response.body().getOverview());
+                    /*
+                    Reset both vote count and vote average as they
+                    may be outdated.
+                     */
+                    movie.setVoteCount(response.body().getVoteCount());
+                    movie.setVoteAverage(response.body().getVoteAverage());
                 }
                 update();
             }
@@ -256,13 +267,15 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                 update();
             }
 
-            /*
-            Seemingly redundant to have this method which just
-            passes on call to updateUI. However can allow for
-            greater customization depending on whether it is
-            called from onResponse or onFailure. Future scope
-            to possibly modify UI. Check loadMovieVideos() and
-            loadMovieReviews() for use case of this style.
+            /**
+             * Seemingly redundant to have this method which just
+             * passes on call to {@link MovieDetailFragment#updateUI}.
+             * However can allow for greater customization depending
+             * on whether it is called from {@link Callback#onResponse}
+             * or {@link Callback#onFailure}. Future scope to possibly
+             * modify UI. Check {@link MovieDetailFragment#loadMovieVideos()}
+             * and {@link MovieDetailFragment#loadMovieReviews()} for
+             * use case of this style.
              */
             private void update() {
                 updateUI();
@@ -301,7 +314,9 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
             overview.invalidate();
             return;
         }
+        rating.setText(String.valueOf(movie.getVoteAverage()));
         tagLine.setText(movie.getTagLine());
+        overview.setText(movie.getOverview());
     }
 
     private void loadMovieVideos() {
