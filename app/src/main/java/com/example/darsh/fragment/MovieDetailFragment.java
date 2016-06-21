@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,12 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
+            if (Constants.DEBUG) Log.i(MovieDetailFragment.class.getName(), movie.getTitle());
+        }
+
+        if (getArguments() != null) {
+            movie = getArguments().getParcelable(Constants.BUNDLE_MOVIE);
+            if (Constants.DEBUG) Log.i("````" + MovieDetailFragment.class.getName(), movie.getTitle());
         }
     }
 
@@ -471,7 +478,17 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
 
     @Override
     public void onMovieClick(Movie movie) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
 
+        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+        movieDetailFragment.setArguments(bundle);
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container_movie_detail, movieDetailFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void setupSimilarMovies() {
