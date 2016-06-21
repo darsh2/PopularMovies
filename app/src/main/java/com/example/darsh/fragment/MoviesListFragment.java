@@ -45,9 +45,12 @@ public class MoviesListFragment extends Fragment {
 
     public MoviesListFragment() {}
 
+    private final String TAG = MoviesListFragment.class.getName();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onCreate");
         /*
         Load list of movies, scroll position, and page number
         from savedInstanceState to restore state.
@@ -57,6 +60,19 @@ public class MoviesListFragment extends Fragment {
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
             position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onCreateView");
+        View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.INVISIBLE);
+
+        recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
+        setUpRecyclerView();
 
         /*
         Determine the sub class type. If it is
@@ -67,19 +83,6 @@ public class MoviesListFragment extends Fragment {
         if (c.getName().endsWith("FavoriteMoviesFragment")) {
             isFavoritesFragment = true;
         }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
-
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.INVISIBLE);
-
-        recyclerView = (EndlessScrollRecyclerView) view.findViewById(R.id.recycler_view_movies_list);
-        setUpRecyclerView();
-
         if (isFavoritesFragment) {
             registerObserver();
             loadMovies();
@@ -172,6 +175,7 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onStart");
         /*
         If movies list is of size zero, movies have to be
         fetched from tmdb. Hence display progress bar.
@@ -188,6 +192,7 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onStop");
         /*
         To keep track of scroll state position.
          */
@@ -197,6 +202,7 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDestroyView");
         if (isFavoritesFragment) {
             unregisterObserver();
         }
@@ -219,8 +225,12 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onSaveInstanceState");
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
+        if (recyclerView == null) {
+            Log.i(TAG, getClass().getName() + " " + isFavoritesFragment);
+        }
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
@@ -324,5 +334,23 @@ public class MoviesListFragment extends Fragment {
                 outRect.left = spacing;
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDetach");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onActivityCreated");
     }
 }

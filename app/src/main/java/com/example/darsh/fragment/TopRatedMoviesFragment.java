@@ -12,6 +12,8 @@ import retrofit2.Response;
  * Created by darshan on 24/4/16.
  */
 public class TopRatedMoviesFragment extends MoviesListFragment {
+    public static final String TAG = TopRatedMoviesFragment.class.getName();
+
     public TopRatedMoviesFragment() {}
 
     @Override

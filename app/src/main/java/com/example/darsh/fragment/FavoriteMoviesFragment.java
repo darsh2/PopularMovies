@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.darsh.database.MovieContract;
+import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 
 import java.util.ArrayList;
@@ -13,9 +14,13 @@ import java.util.ArrayList;
  * Created by darshan on 18/6/16.
  */
 public class FavoriteMoviesFragment extends MoviesListFragment {
+    public static final String TAG = FavoriteMoviesFragment.class.getName();
+
+    public FavoriteMoviesFragment() {}
+
     @Override
     protected void loadMovies() {
-        Log.i(FavoriteMoviesFragment.class.getName(), "loadMovies");
+        if (Constants.DEBUG) Log.i(FavoriteMoviesFragment.class.getName(), "loadMovies");
         new AsyncDbTask().execute();
     }
 
