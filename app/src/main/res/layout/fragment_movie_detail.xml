@@ -142,16 +142,17 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
-                        android:text="Similar"
+                        android:text="@string/similar"
                         android:textSize="20sp"/>
 
                     <TextView
+                        android:id="@+id/text_view_see_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
-                        android:text="SEE MORE"
-                        android:textSize="20sp"/>
+                        android:text="@string/see_more"
+                        android:textSize="15sp"/>
                 </RelativeLayout>
 
                 <android.support.v7.widget.RecyclerView

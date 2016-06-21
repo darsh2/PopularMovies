@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
+import com.example.darsh.activity.MovieDetailActivity;
+import com.example.darsh.activity.MoviesListActivity;
 import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.adapter.SimilarMoviesAdapter;
 import com.example.darsh.adapter.VideosListAdapter;
@@ -193,6 +195,18 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     }
 
     private void initSimilarMovies(View view) {
+        TextView textView = (TextView) view.findViewById(R.id.text_view_see_more);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent((MovieDetailActivity) getActivity(), MoviesListActivity.class);
+                intent.putExtra(Constants.INTENT_EXTRA_TYPE, Constants.MOVIES_SIMILAR);
+                intent.putExtra(Constants.BUNDLE_ID, movie.getId());
+                intent.putExtra(Constants.BUNDLE_TITLE, movie.getTitle());
+                startActivity(intent);
+            }
+        });
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         similarMoviesAdapter = new SimilarMoviesAdapter(MovieDetailFragment.this);

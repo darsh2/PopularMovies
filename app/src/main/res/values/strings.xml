@@ -22,6 +22,7 @@
 
     <string name="similar">Similar</string>
     <string name="none_similar">None similar</string>
+    <string name="similar_to">Movies similar to</string>
 
     <string name="reviews">Reviews</string>
     <string name="no_review">No Review</string>

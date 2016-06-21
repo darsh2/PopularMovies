@@ -13,6 +13,7 @@ import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
 import com.example.darsh.fragment.FavoriteMoviesFragment;
 import com.example.darsh.fragment.PopularMoviesFragment;
+import com.example.darsh.fragment.SimilarMoviesFragment;
 import com.example.darsh.fragment.TopRatedMoviesFragment;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
@@ -22,13 +23,20 @@ import com.example.darsh.popularmovies.R;
  * Created by darshan on 19/4/16.
  */
 public class MoviesListActivity extends AppCompatActivity implements MoviesListAdapter.OnMovieClickListener {
-    private ViewPager viewPager;
+    private final String TAG = MoviesListActivity.class.getName();
 
     private PopularMoviesFragment popularMoviesFragment;
     private TopRatedMoviesFragment topRatedMoviesFragment;
     private FavoriteMoviesFragment favoriteMoviesFragment;
 
-    private final String TAG = MoviesListActivity.class.getName();
+    private SimilarMoviesFragment similarMoviesFragment;
+
+    private int type = Constants.MOVIES_GENERAL;
+    private int movieId;
+    private String movieTitle;
+    private int genreId;
+
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,17 +51,17 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
         }
         setSupportActionBar(toolbar);
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        if (savedInstanceState != null) {
-            popularMoviesFragment = (PopularMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, PopularMoviesFragment.TAG);
-            topRatedMoviesFragment = (TopRatedMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, TopRatedMoviesFragment.TAG);
-            favoriteMoviesFragment = (FavoriteMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, FavoriteMoviesFragment.TAG);
-
-        } else {
-            popularMoviesFragment = new PopularMoviesFragment();
-            topRatedMoviesFragment = new TopRatedMoviesFragment();
-            favoriteMoviesFragment = new FavoriteMoviesFragment();
+        Intent intent = getIntent();
+        if (intent != null) {
+            type = intent.getIntExtra(Constants.INTENT_EXTRA_TYPE, Constants.MOVIES_GENERAL);
+            if (type == Constants.MOVIES_SIMILAR) {
+                movieId = intent.getIntExtra(Constants.BUNDLE_ID, 0);
+                movieTitle = intent.getStringExtra(Constants.BUNDLE_TITLE);
+            }
         }
+
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        initFragments(savedInstanceState);
         setupViewPager();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -64,20 +72,58 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
 
     private void setupViewPager() {
         FragmentTabsAdapter adapter = new FragmentTabsAdapter(getSupportFragmentManager());
+        switch (type) {
+            case Constants.MOVIES_GENERAL: {
+                adapter.addFragment(popularMoviesFragment, getString(R.string.popular));
+                adapter.addFragment(topRatedMoviesFragment, getString(R.string.top_rated));
+                adapter.addFragment(favoriteMoviesFragment, getString(R.string.favorites));
+                viewPager.setOffscreenPageLimit(3);
+                break;
+            }
 
-        /*
-        MoviesListFragment is the superclass Fragment.
-        PopularMoviesFragment and TopRatedMoviesFragment are subclasses of this
-        that just override the loadMovies().
-        Considering that for stage 2, even a favourite movies tab will be added,
-        then FavouriteMoviesFragment can just extend from MoviesListFragment and
-        override implementation of loadMovies().
-         */
-        adapter.addFragment(popularMoviesFragment, getString(R.string.popular));
-        adapter.addFragment(topRatedMoviesFragment, getString(R.string.top_rated));
-        adapter.addFragment(favoriteMoviesFragment, getString(R.string.favorites));
+            case Constants.MOVIES_SIMILAR: {
+                adapter.addFragment(similarMoviesFragment, getString(R.string.similar_to) + " " + movieTitle);
+                break;
+            }
+        }
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(3);
+    }
+
+    private void initFragments(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            loadFromSavedInstanceState(savedInstanceState);
+            return;
+        }
+        switch (type) {
+            case Constants.MOVIES_GENERAL: {
+                popularMoviesFragment = new PopularMoviesFragment();
+                topRatedMoviesFragment = new TopRatedMoviesFragment();
+                favoriteMoviesFragment = new FavoriteMoviesFragment();
+                break;
+            }
+
+            case Constants.MOVIES_SIMILAR: {
+                similarMoviesFragment = new SimilarMoviesFragment();
+                similarMoviesFragment.setId(movieId);
+                break;
+            }
+        }
+    }
+
+    private void loadFromSavedInstanceState(Bundle savedInstanceState) {
+        switch (type) {
+            case Constants.MOVIES_GENERAL: {
+                popularMoviesFragment = (PopularMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, PopularMoviesFragment.TAG);
+                topRatedMoviesFragment = (TopRatedMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, TopRatedMoviesFragment.TAG);
+                favoriteMoviesFragment = (FavoriteMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, FavoriteMoviesFragment.TAG);
+                break;
+            }
+
+            case Constants.MOVIES_SIMILAR: {
+                similarMoviesFragment = (SimilarMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, SimilarMoviesFragment.TAG);
+                break;
+            }
+        }
     }
 
     @Override
@@ -109,8 +155,18 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (Constants.DEBUG) Log.i(TAG, "onSaveInstanceState");
-        getSupportFragmentManager().putFragment(outState, PopularMoviesFragment.TAG, popularMoviesFragment);
-        getSupportFragmentManager().putFragment(outState, TopRatedMoviesFragment.TAG, topRatedMoviesFragment);
-        getSupportFragmentManager().putFragment(outState, FavoriteMoviesFragment.TAG, favoriteMoviesFragment);
+        switch (type) {
+            case Constants.MOVIES_GENERAL: {
+                getSupportFragmentManager().putFragment(outState, PopularMoviesFragment.TAG, popularMoviesFragment);
+                getSupportFragmentManager().putFragment(outState, TopRatedMoviesFragment.TAG, topRatedMoviesFragment);
+                getSupportFragmentManager().putFragment(outState, FavoriteMoviesFragment.TAG, favoriteMoviesFragment);
+                break;
+            }
+
+            case Constants.MOVIES_SIMILAR: {
+                getSupportFragmentManager().putFragment(outState, SimilarMoviesFragment.TAG, similarMoviesFragment);
+                break;
+            }
+        }
     }
 }
