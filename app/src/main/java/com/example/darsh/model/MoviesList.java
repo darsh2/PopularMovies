@@ -3,7 +3,7 @@ package com.example.darsh.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by darshan on 4/4/16.
@@ -15,7 +15,7 @@ public class MoviesList {
 
     @Expose
     @SerializedName("results")
-    private List<Movie> movies;
+    private ArrayList<Movie> movies;
 
     @Expose
     @SerializedName("total_pages")
@@ -33,11 +33,11 @@ public class MoviesList {
         this.page = page;
     }
 
-    public List<Movie> getMovies() {
+    public ArrayList<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(ArrayList<Movie> movies) {
         this.movies = movies;
     }
 

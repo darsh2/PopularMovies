@@ -2,6 +2,7 @@ package com.example.darsh.helper;
 
 import android.content.Context;
 
+import com.example.darsh.model.Movie;
 import com.example.darsh.model.MovieReview;
 import com.example.darsh.model.MovieVideo;
 import com.example.darsh.popularmovies.R;
@@ -50,6 +51,28 @@ public class StateHandler {
             }
         }
         return movieVideo;
+    }
+
+    public static Movie handleSimilarMovieState(Context context, int flag) {
+        Movie movie = new Movie();
+        movie.setPosterPath("");
+        switch (flag) {
+            case Constants.NONE: {
+                movie.setTitle(context.getString(R.string.none_similar));
+                break;
+            }
+
+            case Constants.NETWORK_ERROR: {
+                movie.setTitle(context.getString(R.string.network_error_short));
+                break;
+            }
+
+            case Constants.SERVER_ERROR: {
+                movie.setTitle(context.getString(R.string.server_error_short));
+                break;
+            }
+        }
+        return movie;
     }
 
     public static MovieReview handleMovieReviewState(Context context, int flag) {

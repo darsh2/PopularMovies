@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.example.darsh.adapter.GenresListAdapter;
+import com.example.darsh.adapter.SimilarMoviesAdapter;
 import com.example.darsh.adapter.VideosListAdapter;
 import com.example.darsh.database.MovieContract;
 import com.example.darsh.helper.Constants;
@@ -34,6 +35,7 @@ import com.example.darsh.model.MovieReview;
 import com.example.darsh.model.MovieReviews;
 import com.example.darsh.model.MovieVideo;
 import com.example.darsh.model.MovieVideos;
+import com.example.darsh.model.MoviesList;
 import com.example.darsh.network.TmdbRestClient;
 import com.example.darsh.popularmovies.R;
 
@@ -46,7 +48,7 @@ import retrofit2.Response;
 /**
  * Created by darshan on 14/4/16.
  */
-public class MovieDetailFragment extends Fragment implements VideosListAdapter.OnVideoClickListener {
+public class MovieDetailFragment extends Fragment implements VideosListAdapter.OnVideoClickListener, SimilarMoviesAdapter.OnMovieClickListener {
     private Movie movie;
 
     private boolean isFavorite;
@@ -75,6 +77,9 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
 
     private VideosListAdapter videosListAdapter;
     private RecyclerView videosRecyclerView;
+
+    private SimilarMoviesAdapter similarMoviesAdapter;
+    private RecyclerView similarMoviesRecyclerView;
 
     private TextView reviewAuthor;
     private TextView reviewContent;
@@ -113,9 +118,22 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         });
         new FavoriteCheckerTask().execute();
 
-        /*
-        Setting up movie detail view
-         */
+        initMovieDetail(view);
+        initMovieImages(view);
+        initMovieGenres(view);
+
+        overview = (TextView) view.findViewById(R.id.text_view_overview);
+        overview.setText(movie.getOverview());
+        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
+
+        initMovieVideos(view);
+        initSimilarMovies(view);
+        initMovieReviews(view);
+
+        return view;
+    }
+
+    private void initMovieDetail(View view) {
         TextView title = (TextView) view.findViewById(R.id.text_view_title);
         title.setText(movie.getTitle());
 
@@ -127,27 +145,9 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         rating.setText(voteAverage);
 
         duration = (TextView) view.findViewById(R.id.text_view_duration);
+    }
 
-        /*
-        Initialise layout of genres RecyclerView beforehand.
-        Obtain references to duration and tag line TextViews.
-         */
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        genresListAdapter = new GenresListAdapter();
-        genresRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
-        genresRecyclerView.setLayoutManager(linearLayoutManager);
-        genresRecyclerView.setAdapter(genresListAdapter);
-        genresRecyclerView.addItemDecoration(new SpacingItemDecoration(
-                (int) getResources().getDimension(R.dimen.spacing_genre)));
-
-        overview = (TextView) view.findViewById(R.id.text_view_overview);
-        overview.setText(movie.getOverview());
-        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-
-        /*
-        Load backdrop and poster images.
-         */
+    private void initMovieImages(View view) {
         ImageView backdropImage = (ImageView) view.findViewById(R.id.image_view_backdrop);
         ImageView posterImage = (ImageView) view.findViewById(R.id.image_view_poster);
 
@@ -162,15 +162,40 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                 .load(POSTER_IMAGE_URL + movie.getPosterPath())
                 .placeholder(R.drawable.image_placeholder)
                 .into(posterImage);
+    }
 
-        linearLayoutManager = new LinearLayoutManager(getActivity());
+    private void initMovieGenres(View view) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        genresListAdapter = new GenresListAdapter();
+        genresRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
+        genresRecyclerView.setLayoutManager(linearLayoutManager);
+        genresRecyclerView.setAdapter(genresListAdapter);
+        genresRecyclerView.addItemDecoration(new SpacingItemDecoration(
+                (int) getResources().getDimension(R.dimen.spacing_genre)));
+    }
+
+    private void initMovieVideos(View view) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         videosListAdapter = new VideosListAdapter(MovieDetailFragment.this);
         videosRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_videos_list);
         videosRecyclerView.setLayoutManager(linearLayoutManager);
         videosRecyclerView.setAdapter(videosListAdapter);
         videosRecyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_genre)));
+    }
 
+    private void initSimilarMovies(View view) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        similarMoviesAdapter = new SimilarMoviesAdapter(MovieDetailFragment.this);
+        similarMoviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_similar_movies_list);
+        similarMoviesRecyclerView.setLayoutManager(linearLayoutManager);
+        similarMoviesRecyclerView.setAdapter(similarMoviesAdapter);
+        similarMoviesRecyclerView.addItemDecoration(new SpacingItemDecoration((int) getResources().getDimension(R.dimen.spacing_small)));
+    }
+
+    private void initMovieReviews(View view) {
         reviewAuthor = (TextView) view.findViewById(R.id.text_view_review_author);
         reviewContent = (TextView) view.findViewById(R.id.text_view_review_content);
         reviewReadAll = (TextView) view.findViewById(R.id.text_view_review_read_all);
@@ -200,7 +225,6 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
                         .commit();
             }
         });
-        return view;
     }
 
     @Override
@@ -213,6 +237,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
          */
         loadMovieDetails();
         loadMovieVideos();
+        loadSimilarMovies();
         loadMovieReviews();
     }
 
@@ -397,6 +422,62 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         videosListAdapter.setVideos(movie.getMovieVideos());
         videosListAdapter.notifyDataSetChanged();
         videosRecyclerView.setHasFixedSize(true);
+    }
+
+    private void loadSimilarMovies() {
+        if (movie.getSimilarMovies() != null &&
+                movie.getMovieVideos().size() > 0) {
+            setupSimilarMovies();
+            return;
+        }
+
+        Call<MoviesList> call = TmdbRestClient.getInstance()
+                .getSimilarMoviesImpl()
+                .getSimilarMovies(movie.getId(), 1);
+        Callback<MoviesList> callback = new Callback<MoviesList>() {
+            private Movie movieError;
+
+            @Override
+            public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
+                if (!response.isSuccessful()) {
+                    movieError = StateHandler.handleSimilarMovieState(getContext(), Constants.SERVER_ERROR);
+                } else if (response.body().getMovies().size() == 0) {
+                    movieError = StateHandler.handleSimilarMovieState(getContext(), Constants.NONE);
+                } else {
+                    movie.setSimilarMovies(response.body().getMovies());
+                }
+                update();
+            }
+
+            @Override
+            public void onFailure(Call<MoviesList> call, Throwable t) {
+                movieError = StateHandler.handleSimilarMovieState(getContext(), Constants.NETWORK_ERROR);
+                update();
+            }
+
+            private void update() {
+                if (movieError != null) {
+                    ArrayList<Movie> temp = new ArrayList<>();
+                    temp.add(movieError);
+                    movieError = null;
+
+                    movie.setSimilarMovies(temp);
+                }
+                setupSimilarMovies();
+            }
+        };
+        call.enqueue(callback);
+    }
+
+    @Override
+    public void onMovieClick(Movie movie) {
+
+    }
+
+    private void setupSimilarMovies() {
+        similarMoviesAdapter.setSimilarMovies(movie.getSimilarMovies());
+        similarMoviesAdapter.notifyDataSetChanged();
+        similarMoviesRecyclerView.setHasFixedSize(true);
     }
 
     private void loadMovieReviews() {

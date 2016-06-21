@@ -24,6 +24,7 @@ public class TmdbRestClient {
     private MoviesApi.MovieDetails movieDetails;
     private MoviesApi.MovieDetailVideos movieVidoes;
     private MoviesApi.MovieDetailReviews movieReviews;
+    private MoviesApi.SimilarMovies similarMovies;
 
     private Retrofit retrofit;
 
@@ -73,6 +74,13 @@ public class TmdbRestClient {
             movieReviews = retrofit.create(MoviesApi.MovieDetailReviews.class);
         }
         return movieReviews;
+    }
+
+    public MoviesApi.SimilarMovies getSimilarMoviesImpl() {
+        if (similarMovies == null) {
+            similarMovies = retrofit.create(MoviesApi.SimilarMovies.class);
+        }
+        return similarMovies;
     }
 
     private void initializeRetrofit() {

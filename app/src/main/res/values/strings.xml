@@ -20,6 +20,9 @@
     <string name="videos">Videos</string>
     <string name="no_video">No video</string>
 
+    <string name="similar">Similar</string>
+    <string name="none_similar">None similar</string>
+
     <string name="reviews">Reviews</string>
     <string name="no_review">No Review</string>
     <string name="no_reviews">Users are yet to review this movie.</string>
