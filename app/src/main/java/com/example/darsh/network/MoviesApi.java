@@ -1,6 +1,7 @@
 package com.example.darsh.network;
 
 import com.example.darsh.model.Movie;
+import com.example.darsh.model.MovieImages;
 import com.example.darsh.model.MovieReviews;
 import com.example.darsh.model.MovieVideos;
 import com.example.darsh.model.MoviesList;
@@ -47,5 +48,10 @@ public class MoviesApi {
     public interface MovieDetailReviews {
         @GET("movie/{id}/reviews")
         Call<MovieReviews> getMovieReviews(@Path("id") Integer id, @Query("page") Integer page);
+    }
+
+    public interface MovieBackdropImages {
+        @GET("movie/{id}/images")
+        Call<MovieImages> getMovieBackdropImages(@Path("id") Integer id);
     }
 }

@@ -14,6 +14,8 @@
     <string name="server_error">Oops! Something is wrong at our end. Please try again later.</string>
     <string name="server_error_short">Server error</string>
 
+    <string name="overview">Overview</string>
+    <string name="read_more">READ MORE</string>
     <string name="read_all">READ ALL</string>
     <string name="see_more">SEE MORE</string>
 
@@ -33,4 +35,8 @@
     <string name="cursor_error">Error loading favorites. Please try again later.</string>
 
     <string name="no_movie_selected">No movie selected</string>
+
+    <string name="cast">Cast</string>
+    <string name="director">Director</string>
+    <string name="unknown">Unknown</string>
 </resources>

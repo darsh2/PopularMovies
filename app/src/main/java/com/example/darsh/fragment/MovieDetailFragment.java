@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +79,7 @@ public class MovieDetailFragment extends Fragment
      */
     private TextView tagLine;
     private TextView overview;
+    private TextView readMore;
 
     private VideosListAdapter videosListAdapter;
     private RecyclerView videosRecyclerView;
@@ -137,6 +137,25 @@ public class MovieDetailFragment extends Fragment
         overview = (TextView) view.findViewById(R.id.text_view_overview);
         overview.setText(movie.getOverview());
         tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
+        readMore = (TextView) view.findViewById(R.id.text_view_read_more);
+        readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.BUNDLE_ID, movie.getId());
+                bundle.putString(Constants.BUNDLE_TITLE, movie.getTitle());
+                bundle.putString(Constants.BUNDLE_TAG_LINE, movie.getTagLine());
+                bundle.putString(Constants.BUNDLE_OVERVIEW, movie.getOverview());
+
+                AboutMovieFragment aboutMovieFragment = new AboutMovieFragment();
+                aboutMovieFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container_movie_detail, aboutMovieFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        readMore.setVisibility(View.INVISIBLE);
 
         initMovieVideos(view);
         initSimilarMovies(view);
@@ -357,24 +376,14 @@ public class MovieDetailFragment extends Fragment
         String runtime = Integer.toString(movie.getDuration()) + " minutes";
         duration.setText(runtime);
 
-        /*
-        If the movie does not contain a tag line,
-        remove margins of overview textview to get
-        rid of unused space in layout.
-         */
-        if (movie.getTagLine() == null || movie.getTagLine().length() == 0) {
-            tagLine.setVisibility(View.GONE);
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(0, 0, 0, 0);
-            overview.setLayoutParams(layoutParams);
-            overview.invalidate();
-            return;
-        }
         rating.setText(String.valueOf(movie.getVoteAverage()));
-        tagLine.setText(movie.getTagLine());
+        if (movie.getTagLine() != null) {
+            tagLine.setText(movie.getTagLine());
+        }
         overview.setText(movie.getOverview());
+        if (overview != null || overview.length() > 0) {
+            readMore.setVisibility(View.VISIBLE);
+        }
     }
 
     private void loadMovieVideos() {

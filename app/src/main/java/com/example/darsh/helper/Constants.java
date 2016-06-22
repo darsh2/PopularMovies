@@ -38,8 +38,16 @@ public class Constants {
     public static final String BUNDLE_VOTE_AVERAGE = "voteAverage";
     public static final String BUNDLE_REVIEWS = "reviews";
 
-    public static final String BUNDLE_GENRE_ID = "genre_id";
+    public static final String BUNDLE_GENRE_ID = "genreId";
     public static final String BUNDLE_GENRE = "genre";
+
+    public static final String BUNDLE_TAG_LINE = "tagLine";
+    public static final String BUNDLE_OVERVIEW = "overview";
+    public static final String BUNDLE_IMAGES = "images";
+    public static final String BUNDLE_CAST = "cast";
+    public static final String BUNDLE_DIRECTOR = "director";
+
+    public static final String BUNDLE_FILE_PATH = "filePath";
 
     public static final int MOVIES_GENERAL = 1030;
     public static final int MOVIES_GENRE = 1031;
