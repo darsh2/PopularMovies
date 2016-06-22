@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
 import com.example.darsh.fragment.FavoriteMoviesFragment;
+import com.example.darsh.fragment.GenreMoviesFragment;
 import com.example.darsh.fragment.PopularMoviesFragment;
 import com.example.darsh.fragment.SimilarMoviesFragment;
 import com.example.darsh.fragment.TopRatedMoviesFragment;
@@ -25,16 +26,19 @@ import com.example.darsh.popularmovies.R;
 public class MoviesListActivity extends AppCompatActivity implements MoviesListAdapter.OnMovieClickListener {
     private final String TAG = MoviesListActivity.class.getName();
 
+    private int type = Constants.MOVIES_GENERAL;
+
     private PopularMoviesFragment popularMoviesFragment;
     private TopRatedMoviesFragment topRatedMoviesFragment;
     private FavoriteMoviesFragment favoriteMoviesFragment;
 
     private SimilarMoviesFragment similarMoviesFragment;
-
-    private int type = Constants.MOVIES_GENERAL;
     private int movieId;
     private String movieTitle;
+
+    private GenreMoviesFragment genreMoviesFragment;
     private int genreId;
+    private String genre;
 
     private ViewPager viewPager;
 
@@ -57,6 +61,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
             if (type == Constants.MOVIES_SIMILAR) {
                 movieId = intent.getIntExtra(Constants.BUNDLE_ID, 0);
                 movieTitle = intent.getStringExtra(Constants.BUNDLE_TITLE);
+
+            } else if (type == Constants.MOVIES_GENRE) {
+                genreId = intent.getIntExtra(Constants.BUNDLE_GENRE_ID, 0);
+                genre = intent.getStringExtra(Constants.BUNDLE_GENRE);
             }
         }
 
@@ -85,6 +93,11 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 adapter.addFragment(similarMoviesFragment, getString(R.string.similar_to) + " " + movieTitle);
                 break;
             }
+
+            case Constants.MOVIES_GENRE: {
+                adapter.addFragment(genreMoviesFragment, genre);
+                break;
+            }
         }
         viewPager.setAdapter(adapter);
     }
@@ -107,6 +120,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 similarMoviesFragment.setId(movieId);
                 break;
             }
+
+            case Constants.MOVIES_GENRE: {
+                genreMoviesFragment = new GenreMoviesFragment();
+                genreMoviesFragment.setId(genreId);
+                break;
+            }
         }
     }
 
@@ -121,6 +140,11 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
 
             case Constants.MOVIES_SIMILAR: {
                 similarMoviesFragment = (SimilarMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, SimilarMoviesFragment.TAG);
+                break;
+            }
+
+            case Constants.MOVIES_GENRE: {
+                genreMoviesFragment = (GenreMoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, GenreMoviesFragment.TAG);
                 break;
             }
         }
@@ -165,6 +189,11 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
 
             case Constants.MOVIES_SIMILAR: {
                 getSupportFragmentManager().putFragment(outState, SimilarMoviesFragment.TAG, similarMoviesFragment);
+                break;
+            }
+
+            case Constants.MOVIES_GENRE: {
+                getSupportFragmentManager().putFragment(outState, GenreMoviesFragment.TAG, genreMoviesFragment);
                 break;
             }
         }

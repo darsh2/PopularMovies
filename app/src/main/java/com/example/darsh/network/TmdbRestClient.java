@@ -22,7 +22,8 @@ public class TmdbRestClient {
     private MoviesApi.TopRatedMovies topRatedMovies;
 
     private MoviesApi.MovieDetails movieDetails;
-    private MoviesApi.MovieDetailVideos movieVidoes;
+    private MoviesApi.GenreMovies genreMovies;
+    private MoviesApi.MovieDetailVideos movieVideos;
     private MoviesApi.MovieDetailReviews movieReviews;
     private MoviesApi.SimilarMovies similarMovies;
 
@@ -62,11 +63,18 @@ public class TmdbRestClient {
         return movieDetails;
     }
 
-    public MoviesApi.MovieDetailVideos getMovieVidoesImpl() {
-        if (movieVidoes == null) {
-            movieVidoes = retrofit.create(MoviesApi.MovieDetailVideos.class);
+    public MoviesApi.GenreMovies getGenreMoviesImpl() {
+        if (genreMovies == null) {
+            genreMovies = retrofit.create(MoviesApi.GenreMovies.class);
         }
-        return movieVidoes;
+        return genreMovies;
+    }
+
+    public MoviesApi.MovieDetailVideos getMovieVidoesImpl() {
+        if (movieVideos == null) {
+            movieVideos = retrofit.create(MoviesApi.MovieDetailVideos.class);
+        }
+        return movieVideos;
     }
 
     public MoviesApi.MovieDetailReviews getMovieReviewsImpl() {

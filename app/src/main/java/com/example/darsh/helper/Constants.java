@@ -38,6 +38,9 @@ public class Constants {
     public static final String BUNDLE_VOTE_AVERAGE = "voteAverage";
     public static final String BUNDLE_REVIEWS = "reviews";
 
+    public static final String BUNDLE_GENRE_ID = "genre_id";
+    public static final String BUNDLE_GENRE = "genre";
+
     public static final int MOVIES_GENERAL = 1030;
     public static final int MOVIES_GENRE = 1031;
     public static final int MOVIES_SIMILAR = 1032;

@@ -2,9 +2,11 @@ package com.example.darsh.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.darsh.fragment.MovieDetailFragment;
 import com.example.darsh.model.Genre;
 import com.example.darsh.popularmovies.R;
 
@@ -15,8 +17,10 @@ import java.util.ArrayList;
  */
 public class GenresListAdapter extends RecyclerView.Adapter<GenresListAdapter.ViewHolder> {
     private ArrayList<Genre> genres;
+    private OnGenreClickListener listener;
 
-    public GenresListAdapter() {
+    public GenresListAdapter(MovieDetailFragment fragment) {
+        this.listener = (OnGenreClickListener) fragment;
         this.genres = new ArrayList<>();
     }
 
@@ -28,7 +32,16 @@ public class GenresListAdapter extends RecyclerView.Adapter<GenresListAdapter.Vi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         TextView textView = (TextView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_view_item_genre, parent, false);
-        return new ViewHolder(textView);
+        final ViewHolder viewHolder = new ViewHolder(textView);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onGenreClick(genres.get(viewHolder.getAdapterPosition()));
+                }
+            }
+        });
+        return viewHolder;
     }
 
     @Override
@@ -48,5 +61,9 @@ public class GenresListAdapter extends RecyclerView.Adapter<GenresListAdapter.Vi
             super(textView);
             this.textView = textView;
         }
+    }
+
+    public interface OnGenreClickListener {
+        void onGenreClick(Genre genre);
     }
 }

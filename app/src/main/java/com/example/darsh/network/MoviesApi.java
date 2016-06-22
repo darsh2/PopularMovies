@@ -29,18 +29,23 @@ public class MoviesApi {
         Call<Movie> getMovieDetails(@Path("id") Integer id);
     }
 
+    public interface GenreMovies {
+        @GET("genre/{id}/movies")
+        Call<MoviesList> getGenreMovies(@Path("id") Integer id, @Query("page") Integer page);
+    }
+
     public interface MovieDetailVideos {
         @GET("movie/{id}/videos")
         Call<MovieVideos> getMovieVideos(@Path("id") Integer id);
     }
 
-    public interface MovieDetailReviews {
-        @GET("movie/{id}/reviews")
-        Call<MovieReviews> getMovieReviews(@Path("id") Integer id, @Query("page") Integer page);
-    }
-
     public interface SimilarMovies {
         @GET("movie/{id}/similar")
         Call<MoviesList> getSimilarMovies(@Path("id") Integer id, @Query("page") Integer page);
+    }
+
+    public interface MovieDetailReviews {
+        @GET("movie/{id}/reviews")
+        Call<MovieReviews> getMovieReviews(@Path("id") Integer id, @Query("page") Integer page);
     }
 }

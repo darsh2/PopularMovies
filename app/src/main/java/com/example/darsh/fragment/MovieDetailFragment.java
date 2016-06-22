@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
-import com.example.darsh.activity.MovieDetailActivity;
 import com.example.darsh.activity.MoviesListActivity;
 import com.example.darsh.adapter.GenresListAdapter;
 import com.example.darsh.adapter.SimilarMoviesAdapter;
@@ -33,6 +32,7 @@ import com.example.darsh.adapter.VideosListAdapter;
 import com.example.darsh.database.MovieContract;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.helper.StateHandler;
+import com.example.darsh.model.Genre;
 import com.example.darsh.model.Movie;
 import com.example.darsh.model.MovieReview;
 import com.example.darsh.model.MovieReviews;
@@ -51,7 +51,8 @@ import retrofit2.Response;
 /**
  * Created by darshan on 14/4/16.
  */
-public class MovieDetailFragment extends Fragment implements VideosListAdapter.OnVideoClickListener, SimilarMoviesAdapter.OnMovieClickListener {
+public class MovieDetailFragment extends Fragment
+        implements GenresListAdapter.OnGenreClickListener, VideosListAdapter.OnVideoClickListener, SimilarMoviesAdapter.OnMovieClickListener {
     private Movie movie;
 
     private boolean isFavorite;
@@ -176,7 +177,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
     private void initMovieGenres(View view) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        genresListAdapter = new GenresListAdapter();
+        genresListAdapter = new GenresListAdapter(MovieDetailFragment.this);
         genresRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_genres_list);
         genresRecyclerView.setLayoutManager(linearLayoutManager);
         genresRecyclerView.setAdapter(genresListAdapter);
@@ -199,7 +200,7 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent((MovieDetailActivity) getActivity(), MoviesListActivity.class);
+                Intent intent = new Intent(getActivity(), MoviesListActivity.class);
                 intent.putExtra(Constants.INTENT_EXTRA_TYPE, Constants.MOVIES_SIMILAR);
                 intent.putExtra(Constants.BUNDLE_ID, movie.getId());
                 intent.putExtra(Constants.BUNDLE_TITLE, movie.getTitle());
@@ -339,6 +340,15 @@ public class MovieDetailFragment extends Fragment implements VideosListAdapter.O
         genresListAdapter.setGenres(movie.getGenres());
         genresListAdapter.notifyDataSetChanged();
         genresRecyclerView.setHasFixedSize(true);
+    }
+
+    @Override
+    public void onGenreClick(Genre genre) {
+        Intent intent = new Intent(getActivity(), MoviesListActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_TYPE, Constants.MOVIES_GENRE);
+        intent.putExtra(Constants.BUNDLE_GENRE_ID, genre.getId());
+        intent.putExtra(Constants.BUNDLE_GENRE, genre.getName());
+        startActivity(intent);
     }
 
     private void setupAboutMovieView() {
