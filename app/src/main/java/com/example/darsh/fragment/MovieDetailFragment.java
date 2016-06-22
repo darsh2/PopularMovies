@@ -53,6 +53,8 @@ import retrofit2.Response;
  */
 public class MovieDetailFragment extends Fragment
         implements GenresListAdapter.OnGenreClickListener, VideosListAdapter.OnVideoClickListener, SimilarMoviesAdapter.OnMovieClickListener {
+    public static final String TAG = MovieDetailFragment.class.getName();
+
     private Movie movie;
 
     private boolean isFavorite;
@@ -98,7 +100,7 @@ public class MovieDetailFragment extends Fragment
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
-            if (Constants.DEBUG) Log.i(MovieDetailFragment.class.getName(), movie.getTitle());
+            if (Constants.DEBUG && movie != null) Log.i(MovieDetailFragment.class.getName(), movie.getTitle());
         }
 
         if (getArguments() != null) {

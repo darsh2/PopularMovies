@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.darsh.fragment.MovieDetailFragment;
+import com.example.darsh.helper.Constants;
 import com.example.darsh.popularmovies.R;
 
 import java.util.List;

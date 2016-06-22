@@ -8,11 +8,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
 import com.example.darsh.fragment.FavoriteMoviesFragment;
 import com.example.darsh.fragment.GenreMoviesFragment;
+import com.example.darsh.fragment.MovieDetailFragment;
 import com.example.darsh.fragment.PopularMoviesFragment;
 import com.example.darsh.fragment.SimilarMoviesFragment;
 import com.example.darsh.fragment.TopRatedMoviesFragment;
@@ -40,7 +43,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     private int genreId;
     private String genre;
 
+    private TextView noneSelected;
+    private MovieDetailFragment movieDetailFragment;
+
     private ViewPager viewPager;
+
+    private boolean isTablet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +57,18 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
 
         if (Constants.DEBUG) Log.i(TAG, "onCreate");
 
+        isTablet = getResources().getBoolean(R.bool.is_tablet);
+        if (isTablet) {
+            noneSelected = (TextView) findViewById(R.id.text_view_none_selected);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setTitle(getString(R.string.app_name));
         }
-        setSupportActionBar(toolbar);
+        if (!isTablet) {
+            setSupportActionBar(toolbar);
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -107,6 +122,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
             loadFromSavedInstanceState(savedInstanceState);
             return;
         }
+
         switch (type) {
             case Constants.MOVIES_GENERAL: {
                 popularMoviesFragment = new PopularMoviesFragment();
@@ -148,13 +164,39 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 break;
             }
         }
+
+        /*
+        Get movieDetailFragment from the FragmentManager. If
+        it is null, no movie has been selected, hence show the
+        textView. Else, make it invisible.
+         */
+        movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, MovieDetailFragment.TAG);
+        if (movieDetailFragment == null) {
+            noneSelected.setVisibility(View.VISIBLE);
+        } else {
+            noneSelected.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public void onMovieClick(Movie movie) {
-        Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_MOVIE, movie);
-        startActivity(intent);
+        if (!isTablet) {
+            Intent intent = new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(Constants.INTENT_EXTRA_MOVIE, movie);
+            startActivity(intent);
+
+        } else {
+            noneSelected.setVisibility(View.INVISIBLE);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
+
+            movieDetailFragment = new MovieDetailFragment();
+            movieDetailFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_movie_detail, movieDetailFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -196,6 +238,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 getSupportFragmentManager().putFragment(outState, GenreMoviesFragment.TAG, genreMoviesFragment);
                 break;
             }
+        }
+
+        if (isTablet && movieDetailFragment != null) {
+            getSupportFragmentManager().putFragment(outState, MovieDetailFragment.TAG, movieDetailFragment);
         }
     }
 }
