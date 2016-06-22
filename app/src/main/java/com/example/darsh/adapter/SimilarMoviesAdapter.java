@@ -40,7 +40,7 @@ public class SimilarMoviesAdapter extends RecyclerView.Adapter<SimilarMoviesAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_view_item_video_thumbnail, parent, false);
+                .inflate(R.layout.recycler_view_item_thumbnail, parent, false);
         final ViewHolder viewHolder = new ViewHolder(cardView);
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,8 +75,8 @@ public class SimilarMoviesAdapter extends RecyclerView.Adapter<SimilarMoviesAdap
         public ViewHolder(CardView cardView) {
             super(cardView);
             this.cardView = cardView;
-            this.imageView = (ImageView) cardView.findViewById(R.id.image_view_video_thumbnail);
-            this.textView = (TextView) cardView.findViewById(R.id.text_view_video_name);
+            this.imageView = (ImageView) cardView.findViewById(R.id.image_view_thumbnail);
+            this.textView = (TextView) cardView.findViewById(R.id.text_view_name);
         }
     }
 

@@ -20,4 +20,6 @@
     <dimen name="spacing_small">4dp</dimen>
     <dimen name="spacing_medium">8dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
+
+    <bool name="is_tablet">false</bool>
 </resources>
