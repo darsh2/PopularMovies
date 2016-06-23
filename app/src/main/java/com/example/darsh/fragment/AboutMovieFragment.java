@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +47,8 @@ public class AboutMovieFragment extends Fragment {
 
     private TextView textViewCast;
     private TextView textViewDirector;
+
+    private final int limit = 5;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +86,8 @@ public class AboutMovieFragment extends Fragment {
         }
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.view_pager_movie_images);
         viewPager.setAdapter(adapter);
+        CircleIndicator indicator = (CircleIndicator) view.findViewById(R.id.indicator_view_pager);
+        indicator.setViewPager(viewPager);
 
         TextView textViewTagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
         textViewTagLine.setText(tagLine);
@@ -104,6 +109,12 @@ public class AboutMovieFragment extends Fragment {
     }
 
     private void loadImages() {
+        if (movieImages != null &&
+                movieImages.size() > 0) {
+            setupViewPager();
+            return;
+        }
+
         Call<MovieImages> call = TmdbRestClient.getInstance()
                 .getMovieBackdropImagesImpl()
                 .getMovieBackdropImages(movieId);
@@ -118,6 +129,9 @@ public class AboutMovieFragment extends Fragment {
                     update();
                 }
                 movieImages = response.body().getMovieImages();
+                if (movieImages.size() > limit) {
+                    movieImages = new ArrayList<>(movieImages.subList(0, limit));
+                }
                 update();
             }
 
@@ -146,6 +160,11 @@ public class AboutMovieFragment extends Fragment {
     }
 
     private void loadCredits() {
+        if (cast != null && cast.length() > 0) {
+            setupCredits();
+            return;
+        }
+
         Call<Credits> call = TmdbRestClient.getInstance()
                 .getMovieCreditsImpl()
                 .getMovieCredits(movieId);
@@ -172,9 +191,9 @@ public class AboutMovieFragment extends Fragment {
                     }
                 });
                 cast = "";
-                for (int i = 0, l = tempCast.size(); i < l && i < 5; i++) {
+                for (int i = 0, l = tempCast.size(); i < l && i < limit; i++) {
                     cast += tempCast.get(i).getName();
-                    if (i < 4 && i < l - 1) {
+                    if (i < limit - 1 && i < l - 1) {
                         cast += ", ";
                     }
                 }
