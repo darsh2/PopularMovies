@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -54,8 +53,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
-
-        if (Constants.DEBUG) Log.i(TAG, "onCreate");
 
         isTablet = getResources().getBoolean(R.bool.is_tablet);
         if (isTablet) {
@@ -164,6 +161,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 break;
             }
         }
+        if (!isTablet) {
+            return;
+        }
 
         /*
         Get movieDetailFragment from the FragmentManager. If
@@ -200,27 +200,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (Constants.DEBUG) Log.i(TAG, "onStart");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (Constants.DEBUG) Log.i(TAG, "onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (Constants.DEBUG) Log.i(TAG, "onDestroy");
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (Constants.DEBUG) Log.i(TAG, "onSaveInstanceState");
         switch (type) {
             case Constants.MOVIES_GENERAL: {
                 getSupportFragmentManager().putFragment(outState, PopularMoviesFragment.TAG, popularMoviesFragment);

@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -103,12 +102,10 @@ public class MovieDetailFragment extends Fragment
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             movie = intent.getParcelableExtra(Constants.INTENT_EXTRA_MOVIE);
-            if (Constants.DEBUG && movie != null) Log.i(MovieDetailFragment.class.getName(), movie.getTitle());
         }
 
         if (getArguments() != null) {
             movie = getArguments().getParcelable(Constants.BUNDLE_MOVIE);
-            if (Constants.DEBUG) Log.i("````" + MovieDetailFragment.class.getName(), movie.getTitle());
         }
     }
 
@@ -315,7 +312,6 @@ public class MovieDetailFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         /*
         Save the current state of the fragment by saving
         the Movie object to reduce the number of network
@@ -329,7 +325,6 @@ public class MovieDetailFragment extends Fragment
             updateUI();
             return;
         }
-
         Call<Movie> call = TmdbRestClient.getInstance()
                 .getMovieDetailsImpl()
                 .getMovieDetails(movie.getId());
@@ -501,7 +496,6 @@ public class MovieDetailFragment extends Fragment
             setupSimilarMovies();
             return;
         }
-
         Call<MoviesList> call = TmdbRestClient.getInstance()
                 .getSimilarMoviesImpl()
                 .getSimilarMovies(movie.getId(), 1);

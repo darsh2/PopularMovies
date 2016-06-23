@@ -33,11 +33,16 @@ import retrofit2.Response;
  * Created by darshan on 22/6/16.
  */
 public class AboutMovieFragment extends Fragment {
+    private static final String TAG = AboutMovieFragment.class.getName();
+
     private int movieId;
     private String movieTitle;
 
     private ArrayList<MovieImage> movieImages;
     private BackdropMovieImagesAdapter adapter;
+
+    private ViewPager viewPager;
+    private CircleIndicator indicator;
 
     private String tagLine;
     private String overview;
@@ -53,7 +58,6 @@ public class AboutMovieFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (savedInstanceState == null) {
             movieId = getArguments().getInt(Constants.BUNDLE_ID);
             movieTitle = getArguments().getString(Constants.BUNDLE_TITLE);
@@ -84,10 +88,10 @@ public class AboutMovieFragment extends Fragment {
         if (movieImages != null) {
             adapter.addMovieImages(movieImages);
         }
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.view_pager_movie_images);
+        viewPager = (ViewPager) view.findViewById(R.id.view_pager_movie_images);
         viewPager.setAdapter(adapter);
-        CircleIndicator indicator = (CircleIndicator) view.findViewById(R.id.indicator_view_pager);
-        indicator.setViewPager(viewPager);
+        indicator = (CircleIndicator) view.findViewById(R.id.indicator_view_pager);
+        indicator.setVisibility(View.INVISIBLE);
 
         TextView textViewTagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
         textViewTagLine.setText(tagLine);
@@ -157,6 +161,9 @@ public class AboutMovieFragment extends Fragment {
     private void setupViewPager() {
         adapter.addMovieImages(movieImages);
         adapter.notifyDataSetChanged();
+
+        indicator.setViewPager(viewPager);
+        indicator.setVisibility(View.VISIBLE);
     }
 
     private void loadCredits() {

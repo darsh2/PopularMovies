@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.darsh.fragment.MovieDetailFragment;
-import com.example.darsh.helper.Constants;
 import com.example.darsh.popularmovies.R;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
  * Created by darshan on 14/4/16.
  */
 public class MovieDetailActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

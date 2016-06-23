@@ -32,6 +32,8 @@ import retrofit2.Response;
  * Created by darshan on 10/6/16.
  */
 public class MovieReviewsFragment extends Fragment {
+    private static final String TAG = MovieReviewsFragment.class.getName();
+
     private int id;
     private String title;
     private long voteCount;
@@ -101,7 +103,6 @@ public class MovieReviewsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Constants.BUNDLE_REVIEWS, movieReviews);
     }
 
