@@ -15,7 +15,7 @@ public class StateHandler {
         String tagLine;
         switch (flag) {
             case Constants.NETWORK_ERROR: {
-                tagLine = context.getString(R.string.network_error_movie_detail);
+                tagLine = context.getString(R.string.network_error);
                 break;
             }
 
@@ -85,7 +85,7 @@ public class StateHandler {
             }
 
             case Constants.NETWORK_ERROR: {
-                review.setContent(context.getString(R.string.network_error_movie_detail));
+                review.setContent(context.getString(R.string.network_error));
                 break;
             }
 

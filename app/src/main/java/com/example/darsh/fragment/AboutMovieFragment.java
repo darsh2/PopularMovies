@@ -12,12 +12,17 @@ import android.widget.TextView;
 
 import com.example.darsh.adapter.BackdropMovieImagesAdapter;
 import com.example.darsh.helper.Constants;
+import com.example.darsh.model.Cast;
+import com.example.darsh.model.Credits;
+import com.example.darsh.model.Crew;
 import com.example.darsh.model.MovieImage;
 import com.example.darsh.model.MovieImages;
 import com.example.darsh.network.TmdbRestClient;
 import com.example.darsh.popularmovies.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -141,7 +146,64 @@ public class AboutMovieFragment extends Fragment {
     }
 
     private void loadCredits() {
+        Call<Credits> call = TmdbRestClient.getInstance()
+                .getMovieCreditsImpl()
+                .getMovieCredits(movieId);
+        Callback<Credits> callback = new Callback<Credits>() {
+            @Override
+            public void onResponse(Call<Credits> call, Response<Credits> response) {
+                if (!response.isSuccessful()) {
+                    cast = getString(R.string.server_error);
+                    director = getString(R.string.server_error);
+                    setupCredits();
+                    return;
+                }
 
+                ArrayList<Cast> tempCast = response.body().getCast();
+                /*
+                Sort the cast by order. Display only them whose
+                order is less than 5. This is just a temporary
+                measure.
+                 */
+                Collections.sort(tempCast, new Comparator<Cast>() {
+                    @Override
+                    public int compare(Cast lhs, Cast rhs) {
+                        return lhs.getOrder() - rhs.getOrder();
+                    }
+                });
+                cast = "";
+                for (int i = 0, l = tempCast.size(); i < l && i < 5; i++) {
+                    cast += tempCast.get(i).getName();
+                    if (i < 4 && i < l - 1) {
+                        cast += ", ";
+                    }
+                }
+
+                director = "";
+                ArrayList<Crew> tempCrew = response.body().getCrew();
+                for (int i = 0, l = tempCrew.size(); i < l; i++) {
+                    if (tempCrew.get(i).getDepartment().compareTo("Directing") == 0 &&
+                            tempCrew.get(i).getJob().compareTo("Director") == 0) {
+                        director += tempCrew.get(i).getName() + ", ";
+                    }
+                }
+                director = director.substring(0, director.length() - 2);
+                setupCredits();
+            }
+
+            @Override
+            public void onFailure(Call<Credits> call, Throwable t) {
+                cast = getString(R.string.network_error);
+                director = getString(R.string.network_error);
+                setupCredits();
+            }
+        };
+        call.enqueue(callback);
+    }
+
+    private void setupCredits() {
+        textViewCast.setText(cast);
+        textViewDirector.setText(director);
     }
 
     @Override

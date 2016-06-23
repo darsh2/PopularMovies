@@ -28,6 +28,7 @@ public class TmdbRestClient {
     private MoviesApi.SimilarMovies similarMovies;
 
     private MoviesApi.MovieBackdropImages movieBackdropImages;
+    private MoviesApi.MovieCredits movieCredits;
 
     private Retrofit retrofit;
 
@@ -98,6 +99,13 @@ public class TmdbRestClient {
             movieBackdropImages = retrofit.create(MoviesApi.MovieBackdropImages.class);
         }
         return movieBackdropImages;
+    }
+
+    public MoviesApi.MovieCredits getMovieCreditsImpl() {
+        if (movieCredits == null) {
+            movieCredits = retrofit.create(MoviesApi.MovieCredits.class);
+        }
+        return movieCredits;
     }
 
     private void initializeRetrofit() {

@@ -10,16 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat"/>
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding"
             android:orientation="vertical">
 
             <android.support.v4.view.ViewPager
@@ -27,56 +26,67 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
 
-            <TextView
-                android:id="@+id/text_view_tag_line"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding"
-                android:textSize="20sp"
-                android:textStyle="italic"
-                android:gravity="center"/>
+                android:layout_margin="@dimen/padding"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_view_overview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="15sp"
-                android:gravity="center"/>
+                <TextView
+                    android:id="@+id/text_view_tag_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding"
+                    android:textSize="20sp"
+                    android:textStyle="italic"
+                    android:gravity="center"/>
 
-            <include layout="@layout/view_divider"/>
+                <TextView
+                    android:id="@+id/text_view_overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="15sp"
+                    android:gravity="center"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding"
-                android:text="@string/cast"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                <include layout="@layout/view_divider"/>
 
-            <TextView
-                android:id="@+id/text_view_cast"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:text="@string/unknown"
-                android:textSize="15sp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding"
+                    android:text="@string/cast"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding"
-                android:text="@string/director"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/text_view_cast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:text="@string/unknown"
+                    android:textSize="15sp"/>
 
-            <TextView
-                android:id="@+id/text_view_director"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:text="@string/unknown"
-                android:textSize="15sp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding"
+                    android:text="@string/director"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/text_view_director"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:text="@string/unknown"
+                    android:textSize="15sp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/spacing_small"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

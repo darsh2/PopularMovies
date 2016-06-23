@@ -9,7 +9,7 @@
 
     <string name="error">Error</string>
     <string name="network_error_movie_list">Please check if device is connected to the internet. Scroll down to refresh.</string>
-    <string name="network_error_movie_detail">Please check if device is connected to the internet.</string>
+    <string name="network_error">Please check if device is connected to the internet.</string>
     <string name="network_error_short">No internet</string>
     <string name="server_error">Oops! Something is wrong at our end. Please try again later.</string>
     <string name="server_error_short">Server error</string>
