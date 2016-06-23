@@ -39,4 +39,7 @@
     <string name="cast">Cast</string>
     <string name="director">Director</string>
     <string name="unknown">Unknown</string>
+
+    <string name="share_movie">Share Movie</string>
+    <string name="share_via">Share via</string>
 </resources>

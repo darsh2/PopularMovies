@@ -11,12 +11,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -95,6 +95,8 @@ public class MovieDetailFragment extends Fragment
     private final String BACKDROP_IMAGE_URL = "http://image.tmdb.org/t/p/w500";
     private final String POSTER_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
 
+    private final String TMDB_MOVIE_URL = "https://www.themoviedb.org/movie/";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,9 +120,43 @@ public class MovieDetailFragment extends Fragment
         }
 
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        initToolbarAndFAB(view);
+        initMovieDetail(view);
+        initMovieImages(view);
+        initMovieGenres(view);
+        initAboutMovie(view);
+        initMovieVideos(view);
+        initSimilarMovies(view);
+        initMovieReviews(view);
 
+        return view;
+    }
+
+    private void initToolbarAndFAB(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(movie.getTitle());
+        toolbar.inflateMenu(R.menu.menu_movie_detail);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() != R.id.menu_item_share_movie) {
+                    return false;
+                }
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                String url;
+                if (movie.getMovieVideos() == null ||
+                        movie.getMovieVideos().size() == 0) {
+                    url = TMDB_MOVIE_URL + movie.getId();
+                } else {
+                    url = Constants.URI_YOUTUBE_BROWSER + movie.getMovieVideos().get(0).getKey();
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+                startActivity(Intent.createChooser(intent, "Share via"));
+                return true;
+            }
+        });
 
         favoriteButton = (FloatingActionButton) view.findViewById(R.id.button_favorite);
         favoriteButton.setOnClickListener(new View.OnClickListener() {
@@ -130,39 +166,6 @@ public class MovieDetailFragment extends Fragment
             }
         });
         new FavoriteCheckerTask().execute();
-
-        initMovieDetail(view);
-        initMovieImages(view);
-        initMovieGenres(view);
-
-        overview = (TextView) view.findViewById(R.id.text_view_overview);
-        overview.setText(movie.getOverview());
-        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-        readMore = (TextView) view.findViewById(R.id.text_view_read_more);
-        readMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(Constants.BUNDLE_ID, movie.getId());
-                bundle.putString(Constants.BUNDLE_TITLE, movie.getTitle());
-                bundle.putString(Constants.BUNDLE_TAG_LINE, movie.getTagLine());
-                bundle.putString(Constants.BUNDLE_OVERVIEW, movie.getOverview());
-
-                AboutMovieFragment aboutMovieFragment = new AboutMovieFragment();
-                aboutMovieFragment.setArguments(bundle);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.container_movie_detail, aboutMovieFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        readMore.setVisibility(View.INVISIBLE);
-
-        initMovieVideos(view);
-        initSimilarMovies(view);
-        initMovieReviews(view);
-
-        return view;
     }
 
     private void initMovieDetail(View view) {
@@ -205,6 +208,31 @@ public class MovieDetailFragment extends Fragment
         genresRecyclerView.setAdapter(genresListAdapter);
         genresRecyclerView.addItemDecoration(new SpacingItemDecoration(
                 (int) getResources().getDimension(R.dimen.spacing_genre)));
+    }
+
+    private void initAboutMovie(View view) {
+        overview = (TextView) view.findViewById(R.id.text_view_overview);
+        overview.setText(movie.getOverview());
+        tagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
+        readMore = (TextView) view.findViewById(R.id.text_view_read_more);
+        readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.BUNDLE_ID, movie.getId());
+                bundle.putString(Constants.BUNDLE_TITLE, movie.getTitle());
+                bundle.putString(Constants.BUNDLE_TAG_LINE, movie.getTagLine());
+                bundle.putString(Constants.BUNDLE_OVERVIEW, movie.getOverview());
+
+                AboutMovieFragment aboutMovieFragment = new AboutMovieFragment();
+                aboutMovieFragment.setArguments(bundle);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container_movie_detail, aboutMovieFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        readMore.setVisibility(View.INVISIBLE);
     }
 
     private void initMovieVideos(View view) {
