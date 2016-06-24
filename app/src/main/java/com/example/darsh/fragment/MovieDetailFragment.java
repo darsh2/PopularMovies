@@ -473,6 +473,9 @@ public class MovieDetailFragment extends Fragment
         else default to browser.
         Taken from: http://stackoverflow.com/a/12439378/3946664
          */
+        intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
+        /*
         try {
             intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Constants.URI_YOUTUBE_APP + movieVideo.getKey()));
@@ -481,6 +484,7 @@ public class MovieDetailFragment extends Fragment
                     Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
         }
         startActivity(intent);
+         */
     }
 
     private void setupMovieVideos() {

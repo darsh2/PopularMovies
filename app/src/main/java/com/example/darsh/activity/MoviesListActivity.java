@@ -8,8 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
 
 import com.example.darsh.adapter.FragmentTabsAdapter;
 import com.example.darsh.adapter.MoviesListAdapter;
@@ -45,8 +43,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     private int genreId;
     private String genre;
 
-    private TextView noneSelected;
-
     private ViewPager viewPager;
 
     private boolean isTablet;
@@ -57,9 +53,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
         setContentView(R.layout.activity_movies_list);
 
         isTablet = getResources().getBoolean(R.bool.is_tablet);
-        if (isTablet) {
-            noneSelected = (TextView) findViewById(R.id.text_view_none_selected);
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -168,7 +161,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
             for (int i = 0, l = fragments.size(); i < l; i++) {
                 Fragment fragment = fragments.get(i);
                 if (fragment instanceof MovieDetailFragment) {
-                    noneSelected.setVisibility(View.INVISIBLE);
                     return;
                 }
             }
@@ -183,8 +175,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
             startActivity(intent);
 
         } else {
-            noneSelected.setVisibility(View.INVISIBLE);
-
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
 
