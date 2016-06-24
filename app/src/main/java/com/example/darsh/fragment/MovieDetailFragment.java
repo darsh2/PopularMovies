@@ -1,6 +1,5 @@
 package com.example.darsh.fragment;
 
-import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -477,7 +476,7 @@ public class MovieDetailFragment extends Fragment
         try {
             intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Constants.URI_YOUTUBE_APP + movieVideo.getKey()));
-        } catch (ActivityNotFoundException ex) {
+        } catch (android.content.ActivityNotFoundException e) {
             intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
         }

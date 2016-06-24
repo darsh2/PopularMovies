@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,8 @@ import com.example.darsh.fragment.TopRatedMoviesFragment;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 import com.example.darsh.popularmovies.R;
+
+import java.util.List;
 
 /**
  * Created by darshan on 19/4/16.
@@ -43,7 +46,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     private String genre;
 
     private TextView noneSelected;
-    private MovieDetailFragment movieDetailFragment;
 
     private ViewPager viewPager;
 
@@ -161,20 +163,15 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 break;
             }
         }
-        if (!isTablet) {
-            return;
-        }
-
-        /*
-        Get movieDetailFragment from the FragmentManager. If
-        it is null, no movie has been selected, hence show the
-        textView. Else, make it invisible.
-         */
-        movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, MovieDetailFragment.TAG);
-        if (movieDetailFragment == null) {
-            noneSelected.setVisibility(View.VISIBLE);
-        } else {
-            noneSelected.setVisibility(View.INVISIBLE);
+        if (isTablet) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for (int i = 0, l = fragments.size(); i < l; i++) {
+                Fragment fragment = fragments.get(i);
+                if (fragment instanceof MovieDetailFragment) {
+                    noneSelected.setVisibility(View.INVISIBLE);
+                    return;
+                }
+            }
         }
     }
 
@@ -191,10 +188,11 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
 
-            movieDetailFragment = new MovieDetailFragment();
+            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
             movieDetailFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_movie_detail, movieDetailFragment)
+                    .addToBackStack(null)
                     .commit();
         }
     }
@@ -219,10 +217,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 getSupportFragmentManager().putFragment(outState, GenreMoviesFragment.TAG, genreMoviesFragment);
                 break;
             }
-        }
-
-        if (isTablet && movieDetailFragment != null) {
-            getSupportFragmentManager().putFragment(outState, MovieDetailFragment.TAG, movieDetailFragment);
         }
     }
 }

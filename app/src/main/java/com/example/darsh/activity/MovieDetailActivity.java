@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.darsh.fragment.AboutMovieFragment;
 import com.example.darsh.fragment.MovieDetailFragment;
+import com.example.darsh.fragment.MovieReviewsFragment;
 import com.example.darsh.popularmovies.R;
 
 import java.util.List;
@@ -28,7 +30,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
             for (int i = 0, l = fragments.size(); i < l; i++) {
-                if (fragments.get(i) instanceof MovieDetailFragment) {
+                Fragment fragment = fragments.get(i);
+                if (fragment instanceof MovieDetailFragment
+                        || fragment instanceof AboutMovieFragment
+                        || fragment instanceof MovieReviewsFragment) {
                     return;
                 }
             }
