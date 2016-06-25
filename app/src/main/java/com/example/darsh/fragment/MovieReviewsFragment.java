@@ -76,6 +76,12 @@ public class MovieReviewsFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_reviews_list);
         setupRecyclerView();
 
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             ArrayList<MovieReview> temp = savedInstanceState.getParcelableArrayList(Constants.BUNDLE_REVIEWS);
             if (temp != null) {
@@ -85,8 +91,6 @@ public class MovieReviewsFragment extends Fragment {
         } else {
             loadMovieReviews();
         }
-
-        return view;
     }
 
     private void setupRecyclerView() {
