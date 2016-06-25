@@ -2,10 +2,8 @@ package com.example.darsh.fragment;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.darsh.database.MovieContract;
-import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 
 import java.util.ArrayList;
@@ -20,10 +18,12 @@ public class FavoriteMoviesFragment extends MoviesListFragment {
 
     @Override
     protected void loadMovies() {
-        if (Constants.DEBUG) Log.i(FavoriteMoviesFragment.class.getName(), "loadMovies");
         new AsyncDbTask().execute();
     }
 
+    /**
+     * Load movies from favorites.
+     */
     private class AsyncDbTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
         @Override
         protected ArrayList<Movie> doInBackground(Void... params) {

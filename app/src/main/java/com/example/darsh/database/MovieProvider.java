@@ -64,7 +64,9 @@ public class MovieProvider extends ContentProvider {
             }
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return cursor;
     }
 
@@ -102,6 +104,10 @@ public class MovieProvider extends ContentProvider {
                 }
                 Uri returnUri = MovieContract.MovieEntry.buildMovieUri(id);
                 notifyChange(uri);
+                /*
+                Release reference to the database by closing it.
+                Avoid memory leaks.
+                 */
                 sqLiteDatabase.close();
                 return returnUri;
             }
@@ -162,7 +168,16 @@ public class MovieProvider extends ContentProvider {
         return uriMatcher;
     }
 
+    /**
+     * Notify registered {@link android.database.ContentObserver}
+     * that the database was modified either as:<br/>
+     * 1. Insertion or deletion of a row<br/>
+     * 2. Updating values in a row
+     * @param uri Uri of changed content
+     */
     private void notifyChange(Uri uri) {
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
     }
 }

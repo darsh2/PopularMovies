@@ -14,6 +14,9 @@ import retrofit2.Response;
 public class GenreMoviesFragment extends MoviesListFragment {
     public static final String TAG = GenreMoviesFragment.class.getName();
 
+    /**
+     * The genre id pertaining to which movies are loaded.
+     */
     private int id;
 
     public GenreMoviesFragment() {}

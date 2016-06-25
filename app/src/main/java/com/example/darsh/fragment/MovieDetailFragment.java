@@ -71,11 +71,6 @@ public class MovieDetailFragment extends Fragment
     private GenresListAdapter genresListAdapter;
     private RecyclerView genresRecyclerView;
 
-    /*
-    Reference to the overview text is stored as absence of tag line
-    would leave unused space below the list of movie genres.
-    In such a scenario, remove margins of overview text.
-     */
     private TextView tagLine;
     private TextView overview;
     private TextView readMore;
@@ -142,6 +137,11 @@ public class MovieDetailFragment extends Fragment
                 intent.setAction(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 String url;
+                /*
+                If the movie has no videos, share it's
+                tmdb web page. Else share it's first trailer
+                video.
+                 */
                 if (movie.getMovieVideos() == null ||
                         movie.getMovieVideos().size() == 0) {
                     url = TMDB_MOVIE_URL + movie.getId();
@@ -149,7 +149,7 @@ public class MovieDetailFragment extends Fragment
                     url = Constants.URI_YOUTUBE_BROWSER + movie.getMovieVideos().get(0).getKey();
                 }
                 intent.putExtra(Intent.EXTRA_TEXT, url);
-                startActivity(Intent.createChooser(intent, "Share via"));
+                startActivity(Intent.createChooser(intent, getString(R.string.share_via)));
                 return true;
             }
         });
@@ -161,6 +161,9 @@ public class MovieDetailFragment extends Fragment
                 new FavoriteTogglerTask().execute();
             }
         });
+        /*
+        Determine if this movie is added to favorites.
+         */
         new FavoriteCheckerTask().execute();
     }
 
@@ -412,6 +415,13 @@ public class MovieDetailFragment extends Fragment
     private void loadMovieVideos() {
         if (movie.getMovieVideos() != null &&
                 movie.getMovieVideos().size() > 0) {
+            /*
+            Movies are already loaded. In this case, just
+            update the view. This happens when the activity
+            is recreated on configuration change in which
+            case the movie videos are loaded from the
+            savedInstanceState.
+             */
             setupMovieVideos();
             return;
         }
@@ -669,6 +679,10 @@ public class MovieDetailFragment extends Fragment
         @Override
         protected Boolean doInBackground(Void... params) {
             boolean isSuccessful;
+            /*
+            If movie is already among favorites, remove it.
+            Else add.
+             */
             if (isFavorite) {
                 isSuccessful = getContext().getContentResolver()
                         .delete(
@@ -687,16 +701,16 @@ public class MovieDetailFragment extends Fragment
         protected void onPostExecute(Boolean isSuccessful) {
             super.onPostExecute(isSuccessful);
             if (!isSuccessful) {
-                showToast("Operation failed");
+                showToast(getString(R.string.op_failed));
                 return;
             }
             isFavorite = !isFavorite;
             if (isFavorite) {
                 favoriteButton.setImageResource(R.drawable.ic_star_white_24dp);
-                showToast("Movie successfully added to favorites");
+                showToast(getString(R.string.movie_added));
             } else {
                 favoriteButton.setImageResource(R.drawable.ic_star_border_white_24dp);
-                showToast("Movie successfully removed from favorites");
+                showToast(getString(R.string.movie_removed));
             }
         }
 

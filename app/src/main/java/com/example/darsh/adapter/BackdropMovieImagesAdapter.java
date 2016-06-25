@@ -36,6 +36,9 @@ public class BackdropMovieImagesAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
+        /*
+        Dynamically update fragments in ViewPager.
+         */
         return POSITION_NONE;
     }
 }

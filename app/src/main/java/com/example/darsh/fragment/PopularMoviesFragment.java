@@ -19,10 +19,9 @@ public class PopularMoviesFragment extends MoviesListFragment {
     @Override
     protected void loadMovies() {
         super.loadMovies();
-        int page = getPage();
         Call<MoviesList> call = TmdbRestClient.getInstance()
                 .getPopularMoviesImpl()
-                .getPopularMovies(page);
+                .getPopularMovies(getPage());
         Callback<MoviesList> callback = new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {

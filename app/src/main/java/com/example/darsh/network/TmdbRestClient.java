@@ -108,6 +108,13 @@ public class TmdbRestClient {
         return movieCredits;
     }
 
+    /**
+     * Helper function to add the api key parameter
+     * to all requests that are made through {@link Retrofit}.
+     * Sets the base URL of the requests and the
+     * {@link GsonConverterFactory} for parsing the
+     * JSON responses.
+     */
     private void initializeRetrofit() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {

@@ -14,6 +14,10 @@ import retrofit2.Response;
 public class SimilarMoviesFragment extends MoviesListFragment {
     public static final String TAG = SimilarMoviesFragment.class.getName();
 
+    /**
+     * The movie's id for which similar movies
+     * are loaded.
+     */
     private int id;
 
     public SimilarMoviesFragment() {}

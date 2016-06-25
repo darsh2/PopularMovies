@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,8 +19,6 @@ import com.example.darsh.fragment.TopRatedMoviesFragment;
 import com.example.darsh.helper.Constants;
 import com.example.darsh.model.Movie;
 import com.example.darsh.popularmovies.R;
-
-import java.util.List;
 
 /**
  * Created by darshan on 19/4/16.
@@ -58,6 +55,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
         if (toolbar != null) {
             toolbar.setTitle(getString(R.string.app_name));
         }
+        /*
+        In the case of tablet, the other fragment has a different
+        toolbar. Hence set as ActionBar only if it is a phone.
+         */
         if (!isTablet) {
             setSupportActionBar(toolbar);
         }
@@ -110,6 +111,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
     }
 
     private void initFragments(Bundle savedInstanceState) {
+        /*
+        If savedInstanceState is not null, do not recreate the fragments.
+        Use the references to the previously created ones.
+         */
         if (savedInstanceState != null) {
             loadFromSavedInstanceState(savedInstanceState);
             return;
@@ -156,40 +161,21 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 break;
             }
         }
-        if (isTablet) {
-            List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            for (int i = 0, l = fragments.size(); i < l; i++) {
-                Fragment fragment = fragments.get(i);
-                if (fragment instanceof MovieDetailFragment) {
-                    return;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onMovieClick(Movie movie) {
-        if (!isTablet) {
-            Intent intent = new Intent(this, MovieDetailActivity.class);
-            intent.putExtra(Constants.INTENT_EXTRA_MOVIE, movie);
-            startActivity(intent);
-
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
-
-            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-            movieDetailFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_movie_detail, movieDetailFragment)
-                    .addToBackStack(null)
-                    .commit();
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        /*
+        Fragment transactions are added to the backstack. If loading
+        the fragments from a savedInstanceState, the fragments in the
+        view R.id.container_movie_detail are recreated by Android. Hence
+        there is no need of storing a reference to these fragments. On
+        the other hand, the movie list fragments are not recreated
+        probably because the viewpager is itself not persisted. Hence
+        store references to these fragments to avoid reinitialising
+        them when loading from a savedInstanceState.
+         */
         switch (type) {
             case Constants.MOVIES_GENERAL: {
                 getSupportFragmentManager().putFragment(outState, PopularMoviesFragment.TAG, popularMoviesFragment);
@@ -207,6 +193,36 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListA
                 getSupportFragmentManager().putFragment(outState, GenreMoviesFragment.TAG, genreMoviesFragment);
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onMovieClick(Movie movie) {
+        if (!isTablet) {
+            Intent intent = new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(Constants.INTENT_EXTRA_MOVIE, movie);
+            startActivity(intent);
+
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.BUNDLE_MOVIE, movie);
+
+            /*
+            If tablet, the MovieDetailFragment will be loaded in the same
+            activity in the view R.id.container_movie_detail. Using replace
+            instead of add because internally it will work as
+            replace(currentFragment).add(viewId, newFragment, null). This
+            will prevent overlapping of fragments. However, the for the
+            first time this fragment is loaded, it will be as
+            replace(null).add(viewId, newFragment, null) as there are no
+            fragments in that view.
+             */
+            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+            movieDetailFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_movie_detail, movieDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
         }
     }
 }

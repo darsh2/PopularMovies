@@ -53,6 +53,10 @@ public class AboutMovieFragment extends Fragment {
     private TextView textViewCast;
     private TextView textViewDirector;
 
+    /**
+     * Upper limit on the number of backdrop
+     * images to display.
+     */
     private final int limit = 5;
 
     @Override

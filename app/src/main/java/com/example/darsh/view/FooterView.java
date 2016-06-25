@@ -65,6 +65,20 @@ public class FooterView extends LinearLayout {
         addView(textView);
     }
 
+    /**
+     * Helper function to set visibility of this
+     * view and the text displayed based on state.
+     * @param state Integer describing the possible
+     *              states ({@link Constants#LOADING},
+     *              {@link Constants#DONE},
+     *              {@link Constants#NO_MORE},
+     *              {@link Constants#NETWORK_ERROR},
+     *              {@link Constants#SERVER_ERROR},
+     *              {@link Constants#LOADING_FAVORITES},
+     *              {@link Constants#NONE},
+     *              {@link Constants#CURSOR_ERROR})
+     *              the view can be in.
+     */
     public void setState(int state) {
         switch (state) {
             case Constants.LOADING: {

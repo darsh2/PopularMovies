@@ -285,6 +285,10 @@ public class EndlessScrollRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * Interface to load more movies when recycler view
+     * scrolls to the end of current list.
+     */
     public interface LoadingListener {
         void onLoadMore();
     }

@@ -15,6 +15,11 @@ import retrofit2.http.Query;
 /**
  * Created by darshan on 4/4/16.
  */
+
+/**
+ * Helper class that contains all the tmdb
+ * API endpoints used for this app.
+ */
 public class MoviesApi {
     public interface PopularMovies {
         @GET("movie/popular")

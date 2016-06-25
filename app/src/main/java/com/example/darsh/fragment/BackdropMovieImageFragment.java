@@ -15,6 +15,18 @@ import com.example.darsh.popularmovies.R;
 /**
  * Created by darshan on 22/6/16.
  */
+
+/**
+ * This fragment is used to load movie backdrop images in
+ * the viewPager. In case of a gallery app, it is advised
+ * to use this style of creating a viewPager of full sized
+ * images instead of using a viewPager with imageViews.
+ * It can lead to app crash due to {@link OutOfMemoryError}
+ * as the imageViews are retained in memory. Fragments are
+ * recycled. In this scenario, at most five images will be
+ * present so either method can be used. Used the fragment
+ * method just for better understanding.
+ */
 public class BackdropMovieImageFragment extends Fragment {
     private String filePath;
 

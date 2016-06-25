@@ -34,6 +34,10 @@
     <string name="no_favorites">No movies have been added to favorites.</string>
     <string name="cursor_error">Error loading favorites. Please try again later.</string>
 
+    <string name="op_failed">Operation failed</string>
+    <string name="movie_added">Successfully added movie to favorites</string>
+    <string name="movie_removed">Successfully removed movie from favorites</string>
+
     <string name="no_movie_selected">No movie selected</string>
 
     <string name="cast">Cast</string>

@@ -27,6 +27,12 @@ public class MovieDetailActivity extends AppCompatActivity {
             finish();
         }
 
+        /*
+        If this activity is being recreated from a savedInstanceState,
+        the fragments will still be in the FragmentManager. Do not
+        recreate the fragment or it will lead to overlapping fragments
+        in the same view.
+         */
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
             for (int i = 0, l = fragments.size(); i < l; i++) {
@@ -39,6 +45,12 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         }
 
+        /*
+        Unlike in MovieDetailActivity's onMovieClick, using add(viewId, fragment)
+        because this is only for the first MovieDetailFragment to loaded
+        from this Activity. On clicking a movie found in similar movies
+        in this fragment, the transactions use replace(viewId, fragment).
+         */
         MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container_movie_detail, movieDetailFragment)
