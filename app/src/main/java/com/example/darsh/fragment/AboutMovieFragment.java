@@ -94,7 +94,9 @@ public class AboutMovieFragment extends Fragment {
         indicator.setVisibility(View.INVISIBLE);
 
         TextView textViewTagLine = (TextView) view.findViewById(R.id.text_view_tag_line);
-        textViewTagLine.setText(tagLine);
+        if (tagLine != null && tagLine.length() > 0) {
+            textViewTagLine.setText(tagLine);
+        }
 
         TextView textViewOverview = (TextView) view.findViewById(R.id.text_view_overview);
         textViewOverview.setText(overview);

@@ -400,7 +400,7 @@ public class MovieDetailFragment extends Fragment
         duration.setText(runtime);
 
         rating.setText(String.valueOf(movie.getVoteAverage()));
-        if (movie.getTagLine() != null) {
+        if (movie.getTagLine() != null && movie.getTagLine().length() > 0) {
             tagLine.setText(movie.getTagLine());
         }
         overview.setText(movie.getOverview());
@@ -467,14 +467,11 @@ public class MovieDetailFragment extends Fragment
             return;
         }
 
-        Intent intent;
         /*
         Play video using YouTube app if it exists,
         else default to browser.
         Taken from: http://stackoverflow.com/a/12439378/3946664
          */
-        intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
         /*
         try {
             intent = new Intent(Intent.ACTION_VIEW,
@@ -483,8 +480,12 @@ public class MovieDetailFragment extends Fragment
             intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
         }
-        startActivity(intent);
+        The above code for opening youtube video does not work on emulators.
+        So defaulting to opening using browser url.
          */
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(Constants.URI_YOUTUBE_BROWSER + movieVideo.getKey()));
+        startActivity(intent);
     }
 
     private void setupMovieVideos() {
