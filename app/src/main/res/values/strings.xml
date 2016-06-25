@@ -6,6 +6,7 @@
     <string name="favorites">Favorites</string>
 
     <string name="loading">Loading&#8230;</string>
+    <string name="no_more">No more movies to load.</string>
 
     <string name="error">Error</string>
     <string name="network_error_movie_list">Please check if device is connected to the internet. Scroll down to refresh.</string>

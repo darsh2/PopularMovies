@@ -35,6 +35,7 @@ public class SimilarMoviesFragment extends MoviesListFragment {
                     retrievalError(Constants.SERVER_ERROR);
                     return;
                 }
+                setTotalPages(response.body().getTotalPages());
                 addMovies(response.body().getMovies());
             }
 

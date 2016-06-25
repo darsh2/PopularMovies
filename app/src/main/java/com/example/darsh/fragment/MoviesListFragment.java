@@ -36,6 +36,7 @@ public class MoviesListFragment extends Fragment {
     private MoviesListAdapter adapter;
     private ArrayList<Movie> movies;
 
+    private int totalPages;
     private int page;
     private int position;
 
@@ -112,8 +113,14 @@ public class MoviesListFragment extends Fragment {
                     yet to load. Hence increment page number
                     only if number of children is greater than 1.
                      */
-                    if (recyclerView.getChildCount() > 1) {
-                        page++;
+                    if (recyclerView.getChildCount() <= 1) {
+                        return;
+                    }
+                    page++;
+                    if (page > totalPages) {
+                        page = totalPages;
+                        recyclerView.setState(Constants.NO_MORE);
+                        return;
                     }
                     loadMovies();
                 }
@@ -277,6 +284,10 @@ public class MoviesListFragment extends Fragment {
 
     protected int getPage() {
         return page;
+    }
+
+    protected void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
     }
 
     private class SpacingItemDecoration extends RecyclerView.ItemDecoration {

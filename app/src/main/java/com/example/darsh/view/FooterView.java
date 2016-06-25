@@ -93,7 +93,8 @@ public class FooterView extends LinearLayout {
             }
 
             case Constants.NO_MORE: {
-                setVisibility(GONE);
+                textView.setText(getContext().getString(R.string.no_more));
+                setVisibility(VISIBLE);
                 break;
             }
 

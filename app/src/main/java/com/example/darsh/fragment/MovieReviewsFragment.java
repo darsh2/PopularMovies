@@ -69,6 +69,8 @@ public class MovieReviewsFragment extends Fragment {
 
         AppCompatRatingBar ratingBar = (AppCompatRatingBar) view.findViewById(R.id.rating_bar);
         ratingBar.setRating((float) voteAverage);
+        ratingBar.setIsIndicator(true);
+        ratingBar.invalidate();
 
         TextView voteCountText = (TextView) view.findViewById(R.id.text_view_view_count);
         voteCountText.setText(String.format(Locale.getDefault(), "%d", voteCount));
