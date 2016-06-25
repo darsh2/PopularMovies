@@ -41,6 +41,13 @@ public class MoviesListFragment extends Fragment {
 
     private boolean isFavoritesFragment;
     private Handler handler;
+
+    /**
+     * Listens for changes in
+     * {@link com.example.darsh.database.MovieContract.MovieEntry#BASE_CONTENT_URI}.
+     * This is to immediately update the favorites movie list
+     * when a new movie is added or an existing one is removed.
+     */
     private ContentObserver contentObserver;
 
     public MoviesListFragment() {}
@@ -50,7 +57,6 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onCreate");
         /*
         Load list of movies, scroll position, and page number
         from savedInstanceState to restore state.
@@ -85,7 +91,6 @@ public class MoviesListFragment extends Fragment {
         }
         if (isFavoritesFragment) {
             registerObserver();
-            loadMovies();
         }
 
         return view;
@@ -127,6 +132,7 @@ public class MoviesListFragment extends Fragment {
         }
         adapter = new MoviesListAdapter(getActivity(), movies);
         recyclerView.setAdapter(adapter);
+        recyclerView.scrollToPosition(position);
     }
 
     /*
@@ -158,13 +164,11 @@ public class MoviesListFragment extends Fragment {
         contentObserver = new ContentObserver(handler) {
             @Override
             public void onChange(boolean selfChange) {
-                Log.i(MoviesListFragment.class.getName(), "onChange(selfChange)");
                 loadMovies();
             }
 
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                Log.i(MoviesListFragment.class.getName(), "onChange(selfChange, uri)");
                 onChange(selfChange);
             }
         };
@@ -173,36 +177,17 @@ public class MoviesListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onStart");
-        /*
-        If movies list is of size zero, movies have to be
-        fetched from tmdb. Hence display progress bar.
-         */
-        if (movies.size() == 0 && !isFavoritesFragment) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (movies.size() == 0) {
             progressBar.setVisibility(View.VISIBLE);
             loadMovies();
-
-        } else if (position != RecyclerView.NO_POSITION) {
-            recyclerView.scrollToPosition(position);
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onStop");
-        /*
-        To keep track of scroll state position.
-         */
-        position = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDestroyView");
         if (isFavoritesFragment) {
             unregisterObserver();
         }
@@ -225,12 +210,8 @@ public class MoviesListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onSaveInstanceState");
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
-        if (recyclerView == null) {
-            Log.i(TAG, getClass().getName() + " " + isFavoritesFragment);
-        }
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
@@ -240,7 +221,6 @@ public class MoviesListFragment extends Fragment {
 
         } else {
             recyclerView.setState(Constants.LOADING_FAVORITES);
-            progressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -334,23 +314,5 @@ public class MoviesListFragment extends Fragment {
                 outRect.left = spacing;
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDestroy");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onDetach");
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (Constants.DEBUG) Log.i(TAG, getClass().getName() + " onActivityCreated");
     }
 }
