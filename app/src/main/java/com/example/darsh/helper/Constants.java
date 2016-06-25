@@ -22,6 +22,7 @@ public class Constants {
 
     public static final String MOVIES_LIST = "moviesList";
     public static final String NEXT_PAGE = "nextPage";
+    public static final String TOTAL_PAGES = "totalPages";
     public static final String SCROLL_POSITION = "scrollPosition";
 
     public static final String INTENT_EXTRA_MOVIE = "movie";

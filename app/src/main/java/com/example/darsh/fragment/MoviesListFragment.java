@@ -36,7 +36,7 @@ public class MoviesListFragment extends Fragment {
     private MoviesListAdapter adapter;
     private ArrayList<Movie> movies;
 
-    private int totalPages;
+    private int totalPages = 1;
     private int page;
     private int position;
 
@@ -65,6 +65,7 @@ public class MoviesListFragment extends Fragment {
         if (savedInstanceState != null) {
             movies = savedInstanceState.getParcelableArrayList(Constants.MOVIES_LIST);
             page = Math.max(page, savedInstanceState.getInt(Constants.NEXT_PAGE));
+            totalPages = savedInstanceState.getInt(Constants.TOTAL_PAGES);
             position = savedInstanceState.getInt(Constants.SCROLL_POSITION);
         }
     }
@@ -219,6 +220,7 @@ public class MoviesListFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Constants.MOVIES_LIST, movies);
         outState.putInt(Constants.NEXT_PAGE, page);
+        outState.putInt(Constants.TOTAL_PAGES, totalPages);
         outState.putInt(Constants.SCROLL_POSITION, ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
