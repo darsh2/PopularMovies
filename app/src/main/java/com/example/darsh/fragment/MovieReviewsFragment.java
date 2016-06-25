@@ -82,12 +82,20 @@ public class MovieReviewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        ArrayList<MovieReview> temp = null;
         if (savedInstanceState != null) {
-            ArrayList<MovieReview> temp = savedInstanceState.getParcelableArrayList(Constants.BUNDLE_REVIEWS);
-            if (temp != null) {
-                movieReviews.addAll(temp);
-                adapter.notifyDataSetChanged();
-            }
+            temp = savedInstanceState.getParcelableArrayList(Constants.BUNDLE_REVIEWS);
+        }
+
+        /*
+        On opening many other movie fragments like detail, reviews,
+        similar movies, genre movies etc and then traversing back,
+        it so happens that parcelable returns null for the previously
+        saved reviews. Reload reviews if they are null.
+         */
+        if (temp != null) {
+            movieReviews.addAll(temp);
+            adapter.notifyDataSetChanged();
         } else {
             loadMovieReviews();
         }
