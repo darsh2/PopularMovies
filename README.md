@@ -11,8 +11,14 @@ Current features:
 * Movie detail additionally include list of genres, tagline, similar movies (apart from requirements)
 * About movie fragment that displays backdrop images, tagline, movie overview, cast and director
 * Reviews fragment listing reviews for particular movie
+* Share movie trailer or it's tmdb webpage
 * List of movies by genre
 * List of movies similar to a particular movie
+
+##Screencasts
+Stage - 2 (mobile) screencast can be found [here](https://youtu.be/Fr26BafjkNw).
+
+Stage - 2 (tablet) screencast can be found [here](https://youtu.be/Txlp9UkMLhk).
 
 Stage - 1 screencast can be found [here](https://youtu.be/-sCmRRbo8Y8).
 
