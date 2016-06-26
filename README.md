@@ -22,12 +22,21 @@ Stage - 2 (tablet) screencast can be found [here](https://youtu.be/Txlp9UkMLhk).
 
 Stage - 1 screencast can be found [here](https://youtu.be/-sCmRRbo8Y8).
 
+##Project Review
+Stage 2 - "You have done a superb job implementing Stage 2 of Popular Movies! I was super impressed by what you have built! As a user myself, I had a great time using your app! Your hard work has paid off! Keep up the good work as you continue your Nanodegree journey! Safe journey and bon voyage! :smile:"
+
+Stage 1 - "In my perspective, you have done a perfect job implementing popular movie stage 1. The format of your codes is extremely standard. Also, your codes can be easily understood. Great job for your popular movie stage 1! Hope to see your stage 2 codes soon! :)"
+
 ## How to use
-Either clone this repository using git or download as zip (and unzip). In app/build.gradle file,
+Either clone this repository using git or download as zip (and unzip). In app/build.gradle file, comment this line
+```gradle
+buildConfigField "String", "TMDB_API_KEY", "\"" + getApiKey() + "\""
+```
+Uncomment this line
 ```gradle
 buildConfigField "String", "TMDB_API_KEY", "\"YOUR_TMDB_API_KEY\""
 ```
-replace YOUR_TMDB_API_KEY with your api key for TMDb.
+and replace YOUR_TMDB_API_KEY with your api key for TMDb.
 
 ## Attribution
 This product uses the [TMDb API](https://www.themoviedb.org/documentation/api/) but is not endorsed or certified by TMDb.
